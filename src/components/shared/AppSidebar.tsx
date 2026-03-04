@@ -8,7 +8,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { SidebarHeaderLayout } from "./SidebarHeaderLayout";
-import { Bookmark, ClipboardList, ListChecks } from "lucide-react";
+import { Bookmark, CalendarDays, ClipboardList, ListChecks } from "lucide-react";
 import { CreateTaskDialog } from "./CreateTaskDialog";
 import { useLocation, useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
@@ -30,6 +30,19 @@ export function AppSidebar() {
 
             <SidebarMenuItem>
               <SearchDialog/>
+            </SidebarMenuItem>
+            <SidebarMenuItem onClick={() => navigate("/today")}>
+              <SidebarMenuButton
+                className={cn(
+                  "cursor-pointer transition",
+                  location.pathname === "/today"
+                    ? "bg-(--button-color)! text-white! hover:bg-(--button-color)! hover:text-white!"
+                    : "text-muted-foreground",
+                )}
+              >
+                <CalendarDays className="h-4 w-4" />
+                <span>Сегодня</span>
+              </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem onClick={() => navigate("/")}>
               <SidebarMenuButton

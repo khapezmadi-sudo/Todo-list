@@ -22,6 +22,11 @@ const RegisterPage = lazy(() =>
     default: module.RegisterPage,
   })),
 );
+const TodayPage = lazy(() =>
+  import("@/pages/TodayPage").then((module) => ({
+    default: module.TodayPage,
+  })),
+);
 
 type RouteType = {
   path: string;
@@ -32,6 +37,7 @@ export const PRIVATE_ROUTES: RouteType[] = [
   { path: "/", element: <HomePage /> },
   { path: "/completed", element: <CompletedPage /> },
   { path: "/important", element: <ImportantPage /> },
+  { path: "/today", element: <TodayPage /> },
 ];
 
 export const PUBLIC_ROUTES: RouteType[] = [
