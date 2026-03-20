@@ -1,21 +1,27 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
-import {
-  SquarePlus,
-} from "lucide-react";
+import { SquarePlus } from "lucide-react";
 import { SidebarMenuButton } from "../ui/sidebar";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addDoc, collection } from "firebase/firestore";
-import { auth, db } from "@/firebase";
+import { auth } from "@/firebase";
 import { useState } from "react";
 import { toast } from "sonner";
 import { CreateTaskForm } from "./CreateTaskForm";
+import { createTask } from "@/services/taskService";
+import { FieldValue, serverTimestamp } from "firebase/firestore";
+
+
+export type CreateTask = {
+  text: string;
+  description: string;
+  completed: boolean;
+  userId: string;
+  isImportant: boolean;
+  createdAt: FieldValue;
+  priority: number;
+};
 
 export const taskSchema = z.object({
   text: z
@@ -28,7 +34,7 @@ export const taskSchema = z.object({
 export type TaskSchemaData = z.infer<typeof taskSchema>;
 
 export function CreateTaskDialog() {
-  const [prority, setPriority] = useState<number>(0);
+  const [priority, setPriority] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
 
   const {
@@ -43,17 +49,18 @@ export function CreateTaskDialog() {
 
   const addTask = async (data: TaskSchemaData) => {
     if (!auth.currentUser) return;
-    if(prority === 0) setPriority(1);
+    if (priority === 0) setPriority(1);
 
-    const myPromise = addDoc(collection(db, "tasks"), {
+    const newTaskData: CreateTask = {
       text: data.text,
       description: data.description || "",
       completed: false,
       userId: auth.currentUser.uid,
       isImportant: false,
-      createdAt: new Date(),
-      priority: prority
-    });
+      createdAt: serverTimestamp(),
+      priority: priority,
+    };
+    const myPromise = createTask(newTaskData);
 
     toast.promise(myPromise, {
       loading: "Создание...",
@@ -88,7 +95,7 @@ export function CreateTaskDialog() {
           onSubmit={addTask} // Передаем саму логику
           isSubmitting={isSubmitting}
           setPriority={setPriority}
-          priority={prority}
+          priority={priority}
         />
       </DialogContent>
     </Dialog>
