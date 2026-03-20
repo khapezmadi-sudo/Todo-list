@@ -8,7 +8,12 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { SidebarHeaderLayout } from "./SidebarHeaderLayout";
-import { Bookmark, CalendarDays, ClipboardList, ListChecks } from "lucide-react";
+import {
+  Bookmark,
+  CalendarDays,
+  ClipboardList,
+  ListChecks,
+} from "lucide-react";
 import { CreateTaskDialog } from "./CreateTaskDialog";
 import { useLocation, useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
@@ -25,12 +30,12 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarMenu>
             <SidebarMenuItem>
+              <SearchDialog />
+            </SidebarMenuItem>
+            <SidebarMenuItem>
               <CreateTaskDialog />
             </SidebarMenuItem>
 
-            <SidebarMenuItem>
-              <SearchDialog/>
-            </SidebarMenuItem>
             <SidebarMenuItem onClick={() => navigate("/today")}>
               <SidebarMenuButton
                 className={cn(
@@ -58,9 +63,7 @@ export function AppSidebar() {
               </SidebarMenuButton>
             </SidebarMenuItem>
 
-            <SidebarMenuItem
-              onClick={() => navigate("/completed")}
-            >
+            <SidebarMenuItem onClick={() => navigate("/completed")}>
               <SidebarMenuButton
                 className={cn(
                   "cursor-pointer transition",
@@ -73,9 +76,7 @@ export function AppSidebar() {
                 <span>Выполнено</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <SidebarMenuItem
-              onClick={() => navigate("/important")}
-            >
+            <SidebarMenuItem onClick={() => navigate("/important")}>
               <SidebarMenuButton
                 className={cn(
                   "cursor-pointer transition items-center",
