@@ -19,9 +19,7 @@
     // Shacn ui
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
 
     /* Linting */
@@ -32,5 +30,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src/**/*"]
 }

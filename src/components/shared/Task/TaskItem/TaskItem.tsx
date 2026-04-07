@@ -6,7 +6,7 @@ import TaskItemEdit from "./TaskItemEdit";
 import { toast } from "sonner";
 import ActionsDropdown from "./ActionsDropdown";
 import TaskItemById from "./TaskItemById";
-import ConfirmDialog from "./ConfirmDialog";
+import ConfirmDialog from "../../ConfirmDialog";
 import TaskItemToggleCheckbox from "./TaskItemToggleCheckbox";
 
 interface TaskItemProps {

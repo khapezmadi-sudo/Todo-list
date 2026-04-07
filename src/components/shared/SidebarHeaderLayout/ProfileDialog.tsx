@@ -1,24 +1,26 @@
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../ui/dialog";
 import { UserIcon } from "lucide-react";
-import { DropdownMenuItem } from "../ui/dropdown-menu";
+import { DropdownMenuItem } from "../../ui/dropdown-menu";
 import useCurrentUser from "@/store/useCurrentUser";
+import { useTranslation } from "react-i18next";
 
 export const ProfileDialog: React.FC = () => {
   const currentUser = useCurrentUser((state) => state.currentUser);
+  const {t} = useTranslation();
 
   return (
     <Dialog>
       <DialogTrigger asChild>
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
           <UserIcon className=" h-4 w-4" />
-          Профиль
+          {t("profile")}
         </DropdownMenuItem>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Профиль</DialogTitle>
+          <DialogTitle>{t("profile")}</DialogTitle>
         </DialogHeader>
 
         <div className="mt-4 flex flex-col items-center gap-4">

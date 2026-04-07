@@ -1,0 +1,19 @@
+{
+  "selectLanguage": "Выберите язык",
+  "allTasks": "Все задачи",
+  "completed": "Выполнено",
+  "important": "Важные",
+  "today": "Сегодня",
+  "createTask": "Создать задачу",
+  "search": "Поиск",
+  "settings": "Настройки",
+  "profile": "Профиль",
+  "statistics": "Статистика",
+  "completedTasks": "Выполненные задачи",
+  "importantTasks": "Важные задачи",
+  "todayTasks": "Задачи на сегодня",
+  "myTasks": "Мои задачи",
+  "logout": "Выйти",
+  "addDescription": "Добавить описание",
+  "cancel": "Отмена"
+}

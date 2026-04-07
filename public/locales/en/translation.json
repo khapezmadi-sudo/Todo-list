@@ -1,0 +1,19 @@
+{
+  "selectLanguage": "Select language",
+  "allTasks": "All tasks",
+  "completed": "Completed",
+  "important": "Important",
+  "today": "Today",
+  "createTask": "Create task",
+  "search": "Search",
+  "settings": "Settings",
+  "profile": "Profile",
+  "statistics": "Statistics",
+  "completedTasks": "Completed tasks",
+  "importantTasks": "Important tasks",
+  "todayTasks": "Today's tasks",
+  "myTasks": "My tasks",
+  "logout": "Logout",
+  "addDescription": "Add description",
+  "cancel": "Cancel"
+}

@@ -1,9 +1,9 @@
 import React from "react";
-import { SidebarMenuButton } from "../ui/sidebar";
+import { SidebarMenuButton } from "../../ui/sidebar";
 import { ChevronDown, User } from "lucide-react";
 import useCurrentUser from "@/store/useCurrentUser";
-import { DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { DropdownMenuTrigger } from "../../ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 
 export const UserDropdown: React.FC = () => {
   const currentUser = useCurrentUser((state) => state.currentUser);

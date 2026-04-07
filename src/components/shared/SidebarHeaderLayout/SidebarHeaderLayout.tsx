@@ -1,11 +1,11 @@
 import React from "react";
-import { SidebarHeader, SidebarMenu, SidebarMenuItem } from "../ui/sidebar";
+import { SidebarHeader, SidebarMenu, SidebarMenuItem } from "../../ui/sidebar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-} from "../ui/dropdown-menu";
+} from "../../ui/dropdown-menu";
 import { UserDropdown } from "./UserDropdown";
 import { signOut } from "firebase/auth";
 import { auth } from "@/firebase";
@@ -13,8 +13,10 @@ import { LogOutIcon } from "lucide-react";
 import { ProfileDialog } from "./ProfileDialog";
 import { SettingsDialog } from "./SettingsDialog";
 import { StatisticsDialog } from "./StatisticsDialog";
+import { useTranslation } from "react-i18next";
 
 export const SidebarHeaderLayout: React.FC = () => {
+  const {t} = useTranslation();
   const logout = async () => {
     try {
       await signOut(auth);
@@ -39,7 +41,7 @@ export const SidebarHeaderLayout: React.FC = () => {
                 className="text-red-600 focus:text-red-600"
               >
                 <LogOutIcon className="text-red-600" />
-                Выход
+                {t("logout")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

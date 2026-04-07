@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 import { SquarePlus } from "lucide-react";
-import { SidebarMenuButton } from "../ui/sidebar";
+import { SidebarMenuButton } from "../../../ui/sidebar";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { CreateTaskForm } from "./CreateTaskForm";
 import { createTask } from "@/services/taskService";
 import { FieldValue, serverTimestamp } from "firebase/firestore";
-
+import { useTranslation } from "react-i18next";
 
 export type CreateTask = {
   text: string;
@@ -36,6 +36,7 @@ export type TaskSchemaData = z.infer<typeof taskSchema>;
 export function CreateTaskDialog() {
   const [priority, setPriority] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
+  const { t } = useTranslation();
 
   const {
     register,
@@ -83,7 +84,7 @@ export function CreateTaskDialog() {
         <SidebarMenuButton className="cursor-pointer">
           <SquarePlus className="font-semibold text-(--button-color)" />
           <span className="text-(--button-color) font-semibold">
-            Добавить задачу
+            {t("createTask")}
           </span>
         </SidebarMenuButton>
       </DialogTrigger>

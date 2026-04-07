@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
+} from "../../../ui/dialog";
 import { Calendar, CheckCircle2, Circle, Clock, AlignLeft } from "lucide-react";
 import useCurrentUser from "@/store/useCurrentUser";
 

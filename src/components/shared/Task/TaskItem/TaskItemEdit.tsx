@@ -10,11 +10,14 @@ import {
 } from "lucide-react";
 import type { Task } from "@/pages/HomePage";
 import { useForm } from "react-hook-form";
-import { taskSchema, type TaskSchemaData } from "./CreateTaskDialog";
+import {
+  taskSchema,
+  type TaskSchemaData,
+} from "../CreateTask/CreateTaskDialog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateTask } from "@/services/taskService";
 import { toast } from "sonner";
-import { TaskPriorityDropdown } from "./TaskPriorityDropdown";
+import { TaskPriorityDropdown } from "../CreateTask/TaskPriorityDropdown";
 
 interface TaskItemEditProps {
   task: Task;

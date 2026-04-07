@@ -7,19 +7,22 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { SidebarHeaderLayout } from "./SidebarHeaderLayout";
+import { SidebarHeaderLayout } from "./SidebarHeaderLayout/SidebarHeaderLayout";
 import {
   Bookmark,
   CalendarDays,
   ClipboardList,
   ListChecks,
 } from "lucide-react";
-import { CreateTaskDialog } from "./CreateTaskDialog";
+import { CreateTaskDialog } from "./Task/CreateTask/CreateTaskDialog";
 import { useLocation, useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
 import { SearchDialog } from "./SearchDialog";
+import { ToggleLanguageSelect } from "./ToggleLanguageSelect";
+import { useTranslation } from "react-i18next";
 
 export function AppSidebar() {
+  const { t } = useTranslation();
   const location = useLocation();
   console.log(location.pathname);
   const navigate = useNavigate();
@@ -46,7 +49,7 @@ export function AppSidebar() {
                 )}
               >
                 <CalendarDays className="h-4 w-4" />
-                <span>Сегодня</span>
+                <span>{t("today")}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem onClick={() => navigate("/")}>
@@ -59,7 +62,7 @@ export function AppSidebar() {
                 )}
               >
                 <ClipboardList className="h-4 w-4" />
-                <span>Все задачи</span>
+                <span>{t("allTasks")}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
 
@@ -73,7 +76,7 @@ export function AppSidebar() {
                 )}
               >
                 <ListChecks className="h-4 w-4" />
-                <span>Выполнено</span>
+                <span>{t("completed")}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem onClick={() => navigate("/important")}>
@@ -86,13 +89,21 @@ export function AppSidebar() {
                 )}
               >
                 <Bookmark className="h-4 w-4" />
-                <span>Важные</span>
+                <span>{t("important")}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarMenuItem>
+              <ToggleLanguageSelect />
+            </SidebarMenuItem>
+          </SidebarGroup>
+        </SidebarContent>
+      </SidebarFooter>
     </Sidebar>
   );
 }

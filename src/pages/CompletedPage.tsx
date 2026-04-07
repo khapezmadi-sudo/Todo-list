@@ -1,4 +1,4 @@
-import TaskItem from "@/components/shared/TaskItem";
+import TaskItem from "@/components/shared/Task/TaskItem/TaskItem";
 import { useCallback, useEffect, useState } from "react";
 import type { Task } from "./HomePage";
 import { auth, db } from "@/firebase";
@@ -14,10 +14,12 @@ import {
 import { deleteTaskById } from "@/services/taskService";
 import { Loading } from "@/components/shared/Loading";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useTranslation } from "react-i18next";
 
 export const CompletedPage = () => {
   const [tasks, setTasks] = useState<Task[] | null>(null);
   const isLoading = tasks === null;
+  const {t} = useTranslation();
   useEffect(() => {
     let unsubscribeSnapshot: () => void;
 
@@ -82,7 +84,7 @@ export const CompletedPage = () => {
     <div className="h-[calc(100vh-120px)]  flex justify-center">
       <ScrollArea className="w-full max-w-2xl px-4   ">
         <h1 className="sticky top-0 z-50 bg-background py-2 text-2xl font-bold mb-4 text-left">
-          Выполненные задачи
+          {t("completedTasks")}
         </h1>
         {tasks.length === 0 ? (
           <p className="text-gray-500 text-left">Нет выполненных задач!</p>

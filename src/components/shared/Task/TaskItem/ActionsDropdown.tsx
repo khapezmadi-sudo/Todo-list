@@ -4,7 +4,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "../../../ui/dropdown-menu";
 import { Bookmark, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { doc, updateDoc } from "firebase/firestore";
@@ -73,6 +73,5 @@ const ActionsDropdown: React.FC<ActionsDropdownProps> = ({
     </DropdownMenu>
   );
 };
-
 
 export default React.memo(ActionsDropdown);

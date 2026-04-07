@@ -1,0 +1,19 @@
+{
+  "selectLanguage": "Тілді таңдау",
+  "allTasks": "Барлық тапсырмалар",
+  "completed": "Орындалған",
+  "important": "Маңызды",
+  "today": "Бүгін",
+  "createTask": "Тапсырма құру",
+  "search": "Іздеу",
+  "settings": "Параметрлер",
+  "profile": "Профиль",
+  "statistics": "Статистика",
+  "completedTasks": "Орындалған тапсырмалар",
+  "importantTasks": "Маңызды тапсырмалар",
+  "todayTasks": "Бүгінгі тапсырмалар",
+  "myTasks": "Менің тапсырмаларым",
+  "logout": "Шығу",
+  "addDescription": "Сипаттама қосу",
+  "cancel": "Болдырмау"
+}

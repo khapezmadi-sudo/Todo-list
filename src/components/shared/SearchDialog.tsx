@@ -22,15 +22,17 @@ import {
   where,
 } from "firebase/firestore";
 
-import TaskItemById from "./TaskItemById";
+import TaskItemById from "./Task/TaskItem/TaskItemById";
 import { ScrollArea } from "../ui/scroll-area";
 import { Loading } from "./Loading";
+import { useTranslation } from "react-i18next";
 
 export const SearchDialog: React.FC = () => {
   const [tasks, setTasks] = useState<Task[] | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
   const [debouncedSearch] = useDebounce(searchQuery, 400);
+  const {t} = useTranslation();
 
   // Подписка только при открытом диалоге
   useEffect(() => {
@@ -75,7 +77,7 @@ export const SearchDialog: React.FC = () => {
         {/* Теперь кнопка в сайдбаре всегда доступна */}
         <SidebarMenuButton className="cursor-pointer text-muted-foreground">
           <Search className="h-4 w-4" />
-          <span>Поиск</span>
+          <span>{t("search")}</span>
         </SidebarMenuButton>
       </DialogTrigger>
 

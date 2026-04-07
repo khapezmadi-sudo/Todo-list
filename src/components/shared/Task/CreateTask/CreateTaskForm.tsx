@@ -1,18 +1,13 @@
 import React from "react";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import {
-  Bell,
-  Calendar,
-  ChevronDown,
-  Inbox,
-  Loader2,
-} from "lucide-react";
-import { DialogClose } from "../ui/dialog";
-import type { UseFormRegister, UseFormHandleSubmit } from "react-hook-form";
+import type { UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
 import type { TaskSchemaData } from "./CreateTaskDialog";
-
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Bell, Calendar, ChevronDown, Inbox, Loader2 } from "lucide-react";
 import { TaskPriorityDropdown } from "./TaskPriorityDropdown";
+import { DialogClose } from "@/components/ui/dialog";
+import { useTranslation } from "react-i18next";
+
 
 interface CreateTaskFormProps {
   // Типизируем через стандартные типы RHF
@@ -28,24 +23,25 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
   handleSubmit,
   register,
   isSubmitting,
-  onSubmit, // Переименовал для ясности
+  onSubmit, 
   setPriority,
-  priority
+  priority,
 }) => {
+  const {t} = useTranslation();
   return (
     // В handleSubmit передаем функцию onSubmit
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
       <div className="px-6 pt-6 pb-4 space-y-4">
         <Input
           type="text"
-          placeholder="Название задачи"
+          placeholder={t("createTask")}
           {...register("text")}
           className="border-none bg-transparent shadow-none text-xl! font-bold tracking-tight focus-visible:ring-0 px-0 h-auto placeholder:text-muted-foreground"
         />
 
         <Input
           type="text"
-          placeholder="Добавить описание..."
+          placeholder={t("addDescription")}
           {...register("description")}
           className="border-none bg-transparent shadow-none text-sm! text-muted-foreground focus-visible:ring-0 px-0 h-auto placeholder:text-muted-foreground"
         />
@@ -86,7 +82,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
         <div className="flex gap-2">
           <DialogClose asChild>
             <Button variant="secondary" type="button" className="h-9 px-4">
-              Отмена
+              {t("cancel")}
             </Button>
           </DialogClose>
 
@@ -98,7 +94,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
             {isSubmitting ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              "Добавить задачу"
+              t("createTask")
             )}
           </Button>
         </div>

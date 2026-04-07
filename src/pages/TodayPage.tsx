@@ -1,4 +1,4 @@
-import TaskItem from "@/components/shared/TaskItem";
+import TaskItem from "@/components/shared/Task/TaskItem/TaskItem";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCallback, useEffect, useState } from "react";
 import { auth, db } from "@/firebase";
@@ -14,10 +14,12 @@ import {
 import { Loading } from "@/components/shared/Loading";
 import { deleteTaskById } from "@/services/taskService";
 import type { Task } from "./HomePage";
+import { useTranslation } from "react-i18next";
 
 export const TodayPage = () => {
   const [tasks, setTasks] = useState<Task[] | null>(null);
   const isLoading = tasks === null;
+  const { t } = useTranslation();
 
   useEffect(() => {
     let unsubscribeSnapshot: () => void;
@@ -79,7 +81,7 @@ export const TodayPage = () => {
     <div className="h-[calc(100vh-120px)] flex justify-center">
       <ScrollArea className="w-full max-w-2xl px-4">
         <h1 className="sticky top-0 z-50 bg-background py-2 text-2xl font-bold mb-4 text-left">
-          Задачи на сегодня
+          {t("todayTasks")}
         </h1>
 
         {tasks.length === 0 ? (

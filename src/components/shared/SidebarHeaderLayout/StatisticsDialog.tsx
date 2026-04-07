@@ -5,8 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
-import { DropdownMenuItem } from "../ui/dropdown-menu";
+} from "../../ui/dialog";
+import { DropdownMenuItem } from "../../ui/dropdown-menu";
 import { ChartNoAxesColumnIncreasing } from "lucide-react";
 
 import {
@@ -23,6 +23,7 @@ import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import type { Task } from "@/pages/HomePage";
 import { auth, db } from "@/firebase";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { useTranslation } from "react-i18next";
 
 const chartConfig = {
   created: {
@@ -49,6 +50,7 @@ const last7DaysStart = (() => {
 
 export const StatisticsDialog: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const {t} = useTranslation();
 
   useEffect(() => {
     let unsubscribeSnapshot: (() => void) | undefined;
@@ -125,14 +127,14 @@ export const StatisticsDialog: React.FC = () => {
     <Dialog>
       <DialogTrigger asChild>
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-          <ChartNoAxesColumnIncreasing className="mr-2 h-4 w-4" />
-          Статистика
+          <ChartNoAxesColumnIncreasing className=" h-4 w-4" />
+          {t("statistics")}
         </DropdownMenuItem>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Статистика</DialogTitle>
+          <DialogTitle>{t("statistics")}</DialogTitle>
         </DialogHeader>
 
         <div className="mt-4">

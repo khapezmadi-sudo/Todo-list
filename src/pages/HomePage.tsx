@@ -1,5 +1,5 @@
 import { Loading } from "@/components/shared/Loading";
-import TaskItem from "@/components/shared/TaskItem";
+import TaskItem from "@/components/shared/Task/TaskItem/TaskItem";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { auth, db } from "@/firebase";
 import { deleteTaskById } from "@/services/taskService";
@@ -14,6 +14,7 @@ import {
   where,
 } from "firebase/firestore";
 import React, { useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 export interface Task {
   id: string;
@@ -29,6 +30,8 @@ export interface Task {
 export const HomePage: React.FC = () => {
   const [tasks, setTasks] = React.useState<Task[] | null>(null); // 1. Исправлено
   const isLoading = tasks === null;
+  const {t} = useTranslation();
+  
 
   useEffect(() => {
     let unsubscribeSnapshot: () => void;
@@ -89,7 +92,7 @@ export const HomePage: React.FC = () => {
     <div className="h-[calc(100vh-120px)] flex justify-center">
       <ScrollArea className="w-full max-w-2xl px-4">
         <h1 className="sticky top-0 z-50 bg-background py-2 text-2xl font-bold mb-4 text-left">
-          Мои задачи
+          {t("myTasks")}
         </h1>
 
         {tasks.length === 0 ? (
