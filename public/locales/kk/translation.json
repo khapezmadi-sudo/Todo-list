@@ -15,5 +15,12 @@
   "myTasks": "Менің тапсырмаларым",
   "logout": "Шығу",
   "addDescription": "Сипаттама қосу",
-  "cancel": "Болдырмау"
+  "cancel": "Болдырмау",
+  "registration": "Тіркелу",
+  "login": "Кіру",
+  "email": "Электрондық пошта",
+  "password": "Құпия сөз",
+  "register": "Тіркелу",
+  "alreadyHaveAccount": "Есептік жазбаңыз бар ма?",
+  "loading": "Жүктелуде..."
 }

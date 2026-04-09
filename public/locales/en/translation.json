@@ -15,5 +15,12 @@
   "myTasks": "My tasks",
   "logout": "Logout",
   "addDescription": "Add description",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "registration": "Registration",
+  "login": "Login",
+  "email": "Email",
+  "password": "Password",
+  "register": "Register",
+  "alreadyHaveAccount": "Already have an account?",
+  "loading": "Loading..."
 }

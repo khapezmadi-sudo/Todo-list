@@ -15,5 +15,12 @@
   "myTasks": "Мои задачи",
   "logout": "Выйти",
   "addDescription": "Добавить описание",
-  "cancel": "Отмена"
+  "cancel": "Отмена",
+  "registration": "Регистрация",
+  "login": "Войти",
+  "email": "Электронная почта",
+  "password": "Пароль",
+  "register": "Зарегистрироваться",
+  "alreadyHaveAccount": "Уже есть аккаунт?",
+  "loading": "Загрузка..."
 }

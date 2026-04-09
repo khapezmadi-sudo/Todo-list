@@ -15,6 +15,7 @@ import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth } from "@/firebase";
 import { Link } from "react-router";
 import { GoogleAuthProvider } from "firebase/auth";
+import { useTranslation } from "react-i18next";
 
 const loginSchema = z.object({
   email: z.string().email("Введите корректный email адрес"),
@@ -24,6 +25,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export const LoginPage: React.FC = () => {
   const [firebaseError, setFirebaseError] = useState<string | null>(null);
+  const {t} = useTranslation();
 
   const {
     register,
@@ -62,7 +64,7 @@ export const LoginPage: React.FC = () => {
         <FieldSet className="w-full max-w-130 rounded-3xl border-2  flex flex-col items-center justify-center p-12 bg-[#fafafa]">
           <FieldGroup className="w-full">
             <FieldLegend className="text-center font-bold text-2xl!">
-              Логин
+              {t("login")}
             </FieldLegend>
 
             {firebaseError && (
@@ -72,7 +74,7 @@ export const LoginPage: React.FC = () => {
             )}
 
             <Field className="mt-2">
-              <FieldLabel htmlFor="email">Email</FieldLabel>
+              <FieldLabel htmlFor="email">{t("email")}</FieldLabel>
               <Input
                 id="email"
                 type="text"
@@ -87,7 +89,7 @@ export const LoginPage: React.FC = () => {
             </Field>
 
             <Field className="mt-2">
-              <FieldLabel htmlFor="password">Пароль</FieldLabel>
+              <FieldLabel htmlFor="password">{t("password")}</FieldLabel>
               <Input
                 id="password"
                 type="password"
@@ -106,7 +108,7 @@ export const LoginPage: React.FC = () => {
               disabled={isSubmitting}
               className="mt-4 bg-(--button-color) cursor-pointer text-white hover:bg-(--button-color)/95   transition-colors duration-300 ease-in-out"
             >
-              {isSubmitting ? "Загрузка..." : "Войти"}
+              {isSubmitting ? t("loading") : t("login")}
             </Button>
 
             <Button
@@ -123,7 +125,7 @@ export const LoginPage: React.FC = () => {
             </Button>
 
             <p className="text-sm text-center mt-2">
-              Нет аккаунта? <Link to="/register">Зарегистрироваться</Link>
+              {t("alreadyHaveAccount")} <Link to="/register"> {t("register")} </Link>
             </p>
           </FieldGroup>
         </FieldSet>

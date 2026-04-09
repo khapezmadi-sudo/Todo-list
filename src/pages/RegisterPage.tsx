@@ -19,6 +19,7 @@ import {
 import { auth } from "../firebase";
 import { FirebaseError } from "firebase/app";
 import { Link } from "react-router";
+import { useTranslation } from "react-i18next";
 
 const registerSchema = z.object({
   email: z.string().email("Введите корректный email адрес"),
@@ -28,6 +29,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export const RegisterPage: React.FC = () => {
   const [firebaseError, setFirebaseError] = useState<string | null>(null);
+  const {t} = useTranslation();
   const {
     register,
     handleSubmit,
@@ -76,7 +78,7 @@ export const RegisterPage: React.FC = () => {
         <FieldSet className="w-full max-w-130 rounded-3xl border-2  flex flex-col items-center justify-center p-12 bg-[#fafafa]">
           <FieldGroup className="w-full">
             <FieldLegend className="text-center font-bold text-2xl!">
-              Регистрация
+              {t("registration")}
             </FieldLegend>
 
             {/* === ВЫВОД ОШИБКИ FIREBASE === */}
@@ -87,7 +89,7 @@ export const RegisterPage: React.FC = () => {
             )}
 
             <Field className="mt-2">
-              <FieldLabel htmlFor="username">Email</FieldLabel>
+              <FieldLabel htmlFor="username">{t("email")}</FieldLabel>
               <Input
                 id="username"
                 type="text"
@@ -103,7 +105,7 @@ export const RegisterPage: React.FC = () => {
             </Field>
 
             <Field className="mt-2">
-              <FieldLabel htmlFor="password">Пароль</FieldLabel>
+              <FieldLabel htmlFor="password">{t("password")}</FieldLabel>
               <Input
                 id="password"
                 type="password"
@@ -123,7 +125,7 @@ export const RegisterPage: React.FC = () => {
               disabled={isSubmitting}
               className="mt-4 bg-(--button-color) cursor-pointer text-white   hover:bg-(--button-color)/95   transition-colors duration-300 ease-in-out"
             >
-              {isSubmitting ? "Загрузка..." : "Зарегистрироваться"}
+              {isSubmitting ? t("loading") : t("register")}
             </Button>
             <Button
               type="button"
@@ -138,7 +140,7 @@ export const RegisterPage: React.FC = () => {
               Google
             </Button>
             <p className="text-sm text-center mt-2">
-              Уже есть аккаунт? <Link to={"/login"}>вход</Link>
+              {t("alreadyHaveAccount")} <Link to={"/login"}> {t("login")} </Link>
             </p>
           </FieldGroup>
         </FieldSet>
