@@ -29,7 +29,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export const RegisterPage: React.FC = () => {
   const [firebaseError, setFirebaseError] = useState<string | null>(null);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
@@ -44,7 +44,6 @@ export const RegisterPage: React.FC = () => {
 
     try {
       await createUserWithEmailAndPassword(auth, data.email, data.password);
-      console.log("Регистрация прошла успешно!");
     } catch (error: unknown) {
       console.error("Ошибка Firebase", error);
 
@@ -140,7 +139,8 @@ export const RegisterPage: React.FC = () => {
               Google
             </Button>
             <p className="text-sm text-center mt-2">
-              {t("alreadyHaveAccount")} <Link to={"/login"}> {t("login")} </Link>
+              {t("alreadyHaveAccount")}{" "}
+              <Link to={"/login"}> {t("login")} </Link>
             </p>
           </FieldGroup>
         </FieldSet>

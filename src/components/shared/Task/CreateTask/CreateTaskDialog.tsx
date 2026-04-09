@@ -10,7 +10,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { CreateTaskForm } from "./CreateTaskForm";
 import { createTask } from "@/services/taskService";
-import { FieldValue, serverTimestamp } from "firebase/firestore";
+import { FieldValue, serverTimestamp, Timestamp } from "firebase/firestore";
 import { useTranslation } from "react-i18next";
 
 export type CreateTask = {
@@ -20,6 +20,7 @@ export type CreateTask = {
   userId: string;
   isImportant: boolean;
   createdAt: FieldValue;
+  dueDate?: Timestamp | null;
   priority: number;
 };
 
@@ -29,6 +30,7 @@ export const taskSchema = z.object({
     .min(3, "Минимум 3 символа")
     .max(100, "Максимум 100 символов"),
   description: z.string().optional(),
+  dueDate: z.date().nullable().optional(),
 });
 
 export type TaskSchemaData = z.infer<typeof taskSchema>;
@@ -41,11 +43,13 @@ export function CreateTaskDialog() {
   const {
     register,
     handleSubmit,
+    setValue,
+    control,
     reset,
     formState: { isSubmitting },
   } = useForm<TaskSchemaData>({
     resolver: zodResolver(taskSchema),
-    defaultValues: { text: "", description: "" },
+    defaultValues: { text: "", description: "", dueDate: null },
   });
 
   const addTask = async (data: TaskSchemaData) => {
@@ -59,6 +63,7 @@ export function CreateTaskDialog() {
       userId: auth.currentUser.uid,
       isImportant: false,
       createdAt: serverTimestamp(),
+      dueDate: data.dueDate ? Timestamp.fromDate(data.dueDate) : null,
       priority: priority,
     };
     const myPromise = createTask(newTaskData);
@@ -97,6 +102,8 @@ export function CreateTaskDialog() {
           isSubmitting={isSubmitting}
           setPriority={setPriority}
           priority={priority}
+          setValue={setValue}
+          control={control}
         />
       </DialogContent>
     </Dialog>

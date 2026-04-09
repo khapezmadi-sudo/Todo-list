@@ -1,6 +1,6 @@
 import TaskItem from "@/components/shared/Task/TaskItem/TaskItem";
 import { useCallback, useEffect, useState } from "react";
-import type { Task } from "./HomePage";
+import type { Task } from "@/types/task";
 import { auth, db } from "@/firebase";
 import {
   collection,
@@ -19,7 +19,7 @@ import { useTranslation } from "react-i18next";
 export const CompletedPage = () => {
   const [tasks, setTasks] = useState<Task[] | null>(null);
   const isLoading = tasks === null;
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   useEffect(() => {
     let unsubscribeSnapshot: () => void;
 

@@ -22,5 +22,12 @@
   "password": "Пароль",
   "register": "Зарегистрироваться",
   "alreadyHaveAccount": "Уже есть аккаунт?",
-  "loading": "Загрузка..."
+  "loading": "Загрузка...",
+  "dueDate": "Срок",
+  "removeDueDate": "Убрать срок",
+  "calendar": "Календарь",
+  "overdue": "Просроченные",
+  "noTasksForSelectedDate": "Нет задач на выбранную дату.",
+  "noTasksToday": "Нет задач на сегодня. Создайте новую задачу!",
+  "tasksCount": "{{count}} задач(и)"
 }

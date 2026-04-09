@@ -8,7 +8,7 @@ import {
   Inbox,
   ChevronDown,
 } from "lucide-react";
-import type { Task } from "@/pages/HomePage";
+import type { Task } from "@/types/task";
 import { useForm } from "react-hook-form";
 import {
   taskSchema,
@@ -18,6 +18,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { updateTask } from "@/services/taskService";
 import { toast } from "sonner";
 import { TaskPriorityDropdown } from "../CreateTask/TaskPriorityDropdown";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar as CalendarPicker } from "@/components/ui/calendar";
+import { Timestamp } from "firebase/firestore";
 
 interface TaskItemEditProps {
   task: Task;
@@ -26,14 +33,30 @@ interface TaskItemEditProps {
 
 const TaskItemEdit: React.FC<TaskItemEditProps> = ({ task, setIsEditing }) => {
   const [priority, setPriority] = React.useState<number>(task.priority);
-  const { register, handleSubmit } = useForm<TaskSchemaData>({
+  const { register, handleSubmit, setValue, watch } = useForm<TaskSchemaData>({
     resolver: zodResolver(taskSchema),
-    defaultValues: { description: task.description, text: task.text },
+    defaultValues: {
+      description: task.description,
+      text: task.text,
+      dueDate: task.dueDate?.toDate ? task.dueDate.toDate() : null,
+    },
   });
+
+  const dueDate = watch("dueDate") ?? null;
+
+  const dueDateLabel = React.useMemo(() => {
+    if (!dueDate) return "Срок";
+    return dueDate.toLocaleDateString("ru-RU", {
+      day: "2-digit",
+      month: "short",
+    });
+  }, [dueDate]);
 
   const onSubmit = async (data: TaskSchemaData): Promise<void> => {
     const myPromise = updateTask(task.id, {
-      ...data,
+      text: data.text,
+      description: data.description,
+      dueDate: data.dueDate ? Timestamp.fromDate(data.dueDate) : null,
       completed: task.completed,
       isImportant: task.isImportant,
       priority: priority,
@@ -53,7 +76,7 @@ const TaskItemEdit: React.FC<TaskItemEditProps> = ({ task, setIsEditing }) => {
     }
   };
   return (
-    <div className="group p-3 border-b bg-gray-50 transition hover:bg-gray-100 relative">
+    <div className="group p-3 border rounded-lg bg-background transition hover:bg-muted/40 relative">
       <div className="flex flex-col gap-2">
         {/* Title */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
@@ -78,15 +101,54 @@ const TaskItemEdit: React.FC<TaskItemEditProps> = ({ task, setIsEditing }) => {
 
           {/* Toolbar */}
           <div className="flex flex-wrap gap-2">
-            <Button
-              variant="outline"
-              type="button"
-              size="sm"
-              className="h-7 text-xs font-normal"
-            >
-              <Calendar className="mr-1.5 h-3 w-3" />
-              Срок
-            </Button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  type="button"
+                  size="sm"
+                  className="h-7 text-xs font-normal"
+                >
+                  <Calendar className="mr-1.5 h-3 w-3" />
+                  {dueDateLabel}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <div className="p-2">
+                  <CalendarPicker
+                    mode="single"
+                    selected={dueDate ?? undefined}
+                    onSelect={(date) =>
+                      setValue("dueDate", date ?? null, {
+                        shouldDirty: true,
+                        shouldTouch: true,
+                        shouldValidate: true,
+                      })
+                    }
+                    initialFocus
+                  />
+                  {dueDate && (
+                    <div className="pt-2 flex justify-end">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 text-xs font-normal"
+                        onClick={() =>
+                          setValue("dueDate", null, {
+                            shouldDirty: true,
+                            shouldTouch: true,
+                            shouldValidate: true,
+                          })
+                        }
+                      >
+                        Убрать срок
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
 
             <TaskPriorityDropdown
               setPriority={setPriority}
@@ -114,7 +176,7 @@ const TaskItemEdit: React.FC<TaskItemEditProps> = ({ task, setIsEditing }) => {
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between pt-2 border-t">
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t">
             <Button
               variant="ghost"
               type="button"

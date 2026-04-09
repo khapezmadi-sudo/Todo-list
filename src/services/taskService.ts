@@ -1,6 +1,6 @@
 import type { CreateTask } from "@/components/shared/Task/CreateTask/CreateTaskDialog";
 import { db } from "@/firebase";
-import type { Task } from "@/pages/HomePage";
+import type { Task } from "@/types/task";
 import {
   doc,
   deleteDoc,

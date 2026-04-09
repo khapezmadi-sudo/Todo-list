@@ -1,5 +1,10 @@
 import React from "react";
-import type { UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
+import type {
+  Control,
+  UseFormHandleSubmit,
+  UseFormRegister,
+  UseFormSetValue,
+} from "react-hook-form";
 import type { TaskSchemaData } from "./CreateTaskDialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,7 +12,13 @@ import { Bell, Calendar, ChevronDown, Inbox, Loader2 } from "lucide-react";
 import { TaskPriorityDropdown } from "./TaskPriorityDropdown";
 import { DialogClose } from "@/components/ui/dialog";
 import { useTranslation } from "react-i18next";
-
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar as CalendarPicker } from "@/components/ui/calendar";
+import { useWatch } from "react-hook-form";
 
 interface CreateTaskFormProps {
   // Типизируем через стандартные типы RHF
@@ -17,17 +28,32 @@ interface CreateTaskFormProps {
   isSubmitting: boolean;
   setPriority: React.Dispatch<React.SetStateAction<number>>;
   priority: number;
+  setValue: UseFormSetValue<TaskSchemaData>;
+  control: Control<TaskSchemaData>;
 }
 
 export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
   handleSubmit,
   register,
   isSubmitting,
-  onSubmit, 
+  onSubmit,
   setPriority,
   priority,
+  setValue,
+  control,
 }) => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
+  const [isDueDateOpen, setIsDueDateOpen] = React.useState(false);
+  const dueDate = useWatch({ control, name: "dueDate" }) ?? null;
+
+  const dueDateLabel = React.useMemo(() => {
+    if (!dueDate) return t("dueDate");
+    return dueDate.toLocaleDateString("ru-RU", {
+      day: "2-digit",
+      month: "short",
+    });
+  }, [dueDate, t]);
+
   return (
     // В handleSubmit передаем функцию onSubmit
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
@@ -47,14 +73,55 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
         />
 
         <div className="flex flex-wrap gap-2 pt-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="h-8 text-xs font-normal"
-          >
-            <Calendar className="mr-2 h-3.5 w-3.5" /> Срок
-          </Button>
+          <Popover open={isDueDateOpen} onOpenChange={setIsDueDateOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs font-normal"
+              >
+                <Calendar className="mr-2 h-3.5 w-3.5" /> {dueDateLabel}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <div className="p-2">
+                <CalendarPicker
+                  mode="single"
+                  selected={dueDate ?? undefined}
+                  onSelect={(date) => {
+                    setValue("dueDate", date ?? null, {
+                      shouldDirty: true,
+                      shouldTouch: true,
+                      shouldValidate: true,
+                    });
+                    if (date) setIsDueDateOpen(false);
+                  }}
+                  initialFocus
+                />
+                {dueDate && (
+                  <div className="pt-2 flex justify-end">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 text-xs font-normal"
+                      onClick={() => {
+                        setValue("dueDate", null, {
+                          shouldDirty: true,
+                          shouldTouch: true,
+                          shouldValidate: true,
+                        });
+                        setIsDueDateOpen(false);
+                      }}
+                    >
+                      {t("removeDueDate")}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
           <TaskPriorityDropdown setPriority={setPriority} priority={priority} />
           <Button
             type="button"

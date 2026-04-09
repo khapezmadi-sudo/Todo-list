@@ -1,4 +1,4 @@
-import type { Task } from "@/pages/HomePage";
+import type { Task } from "@/types/task";
 import React from "react";
 import {
   Dialog,
@@ -15,11 +15,8 @@ interface TaskItemByIdProps {
   trigger: React.ReactNode;
 }
 
-const TaskItemById: React.FC<TaskItemByIdProps> = ({
-  task,
-  trigger,
-}) => {
-  const currentUser = useCurrentUser(state => state.currentUser)
+const TaskItemById: React.FC<TaskItemByIdProps> = ({ task, trigger }) => {
+  const currentUser = useCurrentUser((state) => state.currentUser);
   // Форматируем дату из Firebase Timestamp
   const formattedDate = task.createdAt?.toDate
     ? task.createdAt
@@ -27,12 +24,16 @@ const TaskItemById: React.FC<TaskItemByIdProps> = ({
         .toLocaleDateString("ru-RU", { day: "numeric", month: "long" })
     : "Дата не указана";
 
+  const formattedDueDate = task.dueDate?.toDate
+    ? task.dueDate
+        .toDate()
+        .toLocaleDateString("ru-RU", { day: "numeric", month: "long" })
+    : null;
+
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="  gap-0 p-0 overflow-hidden border-none ">
-        
-
         <div className="p-6">
           <DialogHeader className="mb-6">
             <div className="flex items-center gap-2 mb-2">
@@ -88,6 +89,20 @@ const TaskItemById: React.FC<TaskItemByIdProps> = ({
                 </div>
               </div>
             </div>
+
+            {formattedDueDate && (
+              <div className="flex gap-3">
+                <Calendar className="shrink-0 text-slate-400 mt-1" size={18} />
+                <div className="space-y-1">
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-tight">
+                    Срок
+                  </p>
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <span>{formattedDueDate}</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Подвал с "madi" в стиле чипа */}
@@ -106,6 +121,5 @@ const TaskItemById: React.FC<TaskItemByIdProps> = ({
     </Dialog>
   );
 };
-
 
 export default React.memo(TaskItemById);

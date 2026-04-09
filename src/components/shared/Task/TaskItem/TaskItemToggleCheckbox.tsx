@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import type { Task } from "@/pages/HomePage";
+import type { Task } from "@/types/task";
 import { Check, Loader2 } from "lucide-react";
 import React from "react";
 
@@ -41,6 +41,5 @@ const TaskItemToggleCheckbox: React.FC<TaskItemToggleCheckboxProps> = ({
     </div>
   );
 };
-
 
 export default React.memo(TaskItemToggleCheckbox);

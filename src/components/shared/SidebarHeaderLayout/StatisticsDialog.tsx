@@ -20,7 +20,7 @@ import {
 
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
-import type { Task } from "@/pages/HomePage";
+import type { Task } from "@/types/task";
 import { auth, db } from "@/firebase";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { useTranslation } from "react-i18next";
@@ -50,7 +50,7 @@ const last7DaysStart = (() => {
 
 export const StatisticsDialog: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     let unsubscribeSnapshot: (() => void) | undefined;

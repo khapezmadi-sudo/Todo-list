@@ -28,6 +28,12 @@ const TodayPage = lazy(() =>
   })),
 );
 
+const CalendarPage = lazy(() =>
+  import("@/pages/CalendarPage").then((module) => ({
+    default: module.CalendarPage,
+  })),
+);
+
 type RouteType = {
   path: string;
   element: ReactNode;
@@ -38,6 +44,7 @@ export const PRIVATE_ROUTES: RouteType[] = [
   { path: "/completed", element: <CompletedPage /> },
   { path: "/important", element: <ImportantPage /> },
   { path: "/today", element: <TodayPage /> },
+  { path: "/calendar", element: <CalendarPage /> },
 ];
 
 export const PUBLIC_ROUTES: RouteType[] = [

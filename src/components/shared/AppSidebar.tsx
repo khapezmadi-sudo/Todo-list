@@ -12,6 +12,7 @@ import {
   Bookmark,
   CalendarDays,
   ClipboardList,
+  Clock,
   ListChecks,
 } from "lucide-react";
 import { CreateTaskDialog } from "./Task/CreateTask/CreateTaskDialog";
@@ -24,7 +25,6 @@ import { useTranslation } from "react-i18next";
 export function AppSidebar() {
   const { t } = useTranslation();
   const location = useLocation();
-  console.log(location.pathname);
   const navigate = useNavigate();
   return (
     <Sidebar collapsible="icon">
@@ -48,8 +48,22 @@ export function AppSidebar() {
                     : "text-muted-foreground",
                 )}
               >
-                <CalendarDays className="h-4 w-4" />
+                <Clock className="h-4 w-4" />
                 <span>{t("today")}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            <SidebarMenuItem onClick={() => navigate("/calendar")}>
+              <SidebarMenuButton
+                className={cn(
+                  "cursor-pointer transition",
+                  location.pathname === "/calendar"
+                    ? "bg-(--button-color)! text-white! hover:bg-(--button-color)! hover:text-white!"
+                    : "text-muted-foreground",
+                )}
+              >
+                <CalendarDays className="h-4 w-4" />
+                <span>{t("calendar")}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem onClick={() => navigate("/")}>

@@ -9,29 +9,18 @@ import {
   onSnapshot,
   orderBy,
   query,
-  Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
 import React, { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-export interface Task {
-  id: string;
-  text: string;
-  description?: string;
-  userId: string;
-  createdAt: Timestamp;
-  completed: boolean;
-  isImportant: boolean;
-  priority: number;
-}
+import type { Task } from "@/types/task";
 
 export const HomePage: React.FC = () => {
   const [tasks, setTasks] = React.useState<Task[] | null>(null); // 1. Исправлено
   const isLoading = tasks === null;
-  const {t} = useTranslation();
-  
+  const { t } = useTranslation();
 
   useEffect(() => {
     let unsubscribeSnapshot: () => void;

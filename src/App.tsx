@@ -14,7 +14,6 @@ function App() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setCurrentUser(user);
-        console.log(user);
       } else {
         setCurrentUser(null);
       }
@@ -40,7 +39,7 @@ function App() {
             background: "var(--button-color)", // Темный фон (Slate 800)
             color: "#fff", // Белый текст
             border: "1px solid #374151", // Тонкая рамка
-          }
+          },
         }}
       />
     </div>

@@ -9,7 +9,7 @@ import { Bookmark, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
-import type { Task } from "@/pages/HomePage";
+import type { Task } from "@/types/task";
 import { toast } from "sonner";
 interface ActionsDropdownProps {
   onOpenChange?: (open: boolean) => void; // Добавляем проп

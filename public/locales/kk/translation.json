@@ -22,5 +22,12 @@
   "password": "Құпия сөз",
   "register": "Тіркелу",
   "alreadyHaveAccount": "Есептік жазбаңыз бар ма?",
-  "loading": "Жүктелуде..."
+  "loading": "Жүктелуде...",
+  "dueDate": "Мерзім",
+  "removeDueDate": "Мерзімді алып тастау",
+  "calendar": "Күнтізбе",
+  "overdue": "Мерзімі өткен",
+  "noTasksForSelectedDate": "Таңдалған күнге тапсырма жоқ.",
+  "noTasksToday": "Бүгінге тапсырма жоқ. Жаңа тапсырма құрыңыз!",
+  "tasksCount": "{{count}} тапсырма(лар)"
 }

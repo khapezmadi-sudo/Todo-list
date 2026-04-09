@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import type { Task } from "@/pages/HomePage";
+import type { Task } from "@/types/task";
 import { Edit2, Trash2 } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import TaskItemEdit from "./TaskItemEdit";
@@ -20,6 +20,52 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isToggling, setIsToggling] = useState<boolean>(false); // Загрузка только для чекбокса
+
+  const dueDateChip = React.useMemo(() => {
+    if (task.completed) return null;
+    if (!task.dueDate?.toDate) return null;
+
+    const due = task.dueDate.toDate();
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const startOfTomorrow = new Date(startOfToday);
+    startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
+
+    const startOfDayAfterTomorrow = new Date(startOfTomorrow);
+    startOfDayAfterTomorrow.setDate(startOfDayAfterTomorrow.getDate() + 1);
+
+    const isOverdue = due < startOfToday;
+    const isToday = due >= startOfToday && due < startOfTomorrow;
+    const isTomorrow = due >= startOfTomorrow && due < startOfDayAfterTomorrow;
+
+    const label = isOverdue
+      ? "Просрочено"
+      : isToday
+        ? "Сегодня"
+        : isTomorrow
+          ? "Завтра"
+          : due.toLocaleDateString("ru-RU", { day: "2-digit", month: "short" });
+
+    const className = isOverdue
+      ? "bg-red-50 text-red-700 border-red-200"
+      : isToday
+        ? "bg-blue-50 text-blue-700 border-blue-200"
+        : isTomorrow
+          ? "bg-sky-50 text-sky-700 border-sky-200"
+          : "bg-slate-50 text-slate-700 border-slate-200";
+
+    return (
+      <span
+        className={cn(
+          "mt-1 w-fit inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold",
+          className,
+        )}
+      >
+        {label}
+      </span>
+    );
+  }, [task.completed, task.dueDate]);
 
   const toggleTaskStatus = useCallback(async (): Promise<void> => {
     if (isToggling) return;
@@ -100,6 +146,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
                   {task.description}
                 </p>
               )}
+              {dueDateChip}
             </div>
           }
         />

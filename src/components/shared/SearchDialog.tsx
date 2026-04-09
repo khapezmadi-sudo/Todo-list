@@ -8,7 +8,7 @@ import { Search } from "lucide-react";
 
 import { Input } from "../ui/input";
 
-import type { Task } from "@/pages/HomePage";
+import type { Task } from "@/types/task";
 
 import { useDebounce } from "use-debounce";
 
@@ -32,7 +32,7 @@ export const SearchDialog: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
   const [debouncedSearch] = useDebounce(searchQuery, 400);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   // Подписка только при открытом диалоге
   useEffect(() => {

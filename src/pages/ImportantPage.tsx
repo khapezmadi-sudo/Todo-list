@@ -1,6 +1,6 @@
 import TaskItem from "@/components/shared/Task/TaskItem/TaskItem";
 import { useCallback, useEffect, useState } from "react";
-import type { Task } from "./HomePage";
+import type { Task } from "@/types/task";
 import {
   collection,
   doc,

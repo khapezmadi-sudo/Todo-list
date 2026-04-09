@@ -22,5 +22,12 @@
   "password": "Password",
   "register": "Register",
   "alreadyHaveAccount": "Already have an account?",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "dueDate": "Due date",
+  "removeDueDate": "Remove due date",
+  "calendar": "Calendar",
+  "overdue": "Overdue",
+  "noTasksForSelectedDate": "No tasks for the selected date.",
+  "noTasksToday": "No tasks for today. Create a new one!",
+  "tasksCount": "{{count}} task(s)"
 }
