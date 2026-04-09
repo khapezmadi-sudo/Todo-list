@@ -86,9 +86,9 @@ export function CreateTaskDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <SidebarMenuButton className="cursor-pointer">
-          <SquarePlus className="font-semibold text-(--button-color)" />
-          <span className="text-(--button-color) font-semibold">
+        <SidebarMenuButton className="cursor-pointer text-sidebar-primary dark:text-sidebar-primary hover:text-sidebar-primary dark:hover:text-sidebar-primary">
+          <SquarePlus className="font-semibold text-sidebar-primary dark:text-sidebar-primary" />
+          <span className="text-sidebar-primary dark:text-sidebar-primary font-semibold">
             {t("createTask")}
           </span>
         </SidebarMenuButton>

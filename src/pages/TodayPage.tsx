@@ -117,7 +117,7 @@ export const TodayPage = () => {
 
         {overdueTasks.length > 0 && (
           <div className="pb-6">
-            <h2 className="text-sm font-semibold text-red-700 mb-2">
+            <h2 className="text-sm font-semibold text-destructive mb-2">
               {t("overdue")}
             </h2>
             <div className="space-y-2">
@@ -134,7 +134,7 @@ export const TodayPage = () => {
         )}
 
         {todayTasks.length === 0 ? (
-          <p className="text-gray-500">{t("noTasksToday")}</p>
+          <p className="text-muted-foreground">{t("noTasksToday")}</p>
         ) : (
           <div className="space-y-2 pb-6">
             {todayTasks.map((task) => (

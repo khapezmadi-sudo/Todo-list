@@ -82,15 +82,15 @@ export const SearchDialog: React.FC = () => {
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-lg p-0 overflow-hidden rounded-2xl shadow-xl top-24 translate-y-0">
-        <div className="flex items-center gap-3 border-b px-4 py-3 bg-muted/40">
+        <div className="flex items-center gap-3 border-b px-4 py-3 bg-muted/30">
           <Search className="text-muted-foreground" size={18} />
           <Input
             type="text"
             autoFocus // Чтобы сразу можно было писать
-            placeholder="Поиск по задачам..."
+            placeholder={t("search")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border-none bg-transparent shadow-none text-base focus-visible:ring-0 px-0 h-auto"
+            className="border-none bg-transparent shadow-none text-base focus-visible:ring-0 px-0 h-auto text-foreground"
           />
         </div>
 
@@ -120,7 +120,7 @@ export const SearchDialog: React.FC = () => {
             ))
           ) : (
             <div className="flex flex-col items-center justify-center py-10 text-muted-foreground text-sm">
-              {searchQuery ? "Ничего не найдено" : "Начните вводить текст..."}
+              {searchQuery ? t("searchNoResults") : t("searchStartTyping")}
             </div>
           )}
         </ScrollArea>

@@ -1,5 +1,11 @@
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../ui/dialog";
 import { UserIcon } from "lucide-react";
 import { DropdownMenuItem } from "../../ui/dropdown-menu";
 import useCurrentUser from "@/store/useCurrentUser";
@@ -7,7 +13,7 @@ import { useTranslation } from "react-i18next";
 
 export const ProfileDialog: React.FC = () => {
   const currentUser = useCurrentUser((state) => state.currentUser);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <Dialog>
@@ -31,8 +37,8 @@ export const ProfileDialog: React.FC = () => {
               className="h-24 w-24 rounded-full object-cover border"
             />
           ) : (
-            <div className="h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center">
-              <UserIcon className="h-10 w-10 text-gray-500" />
+            <div className="h-24 w-24 rounded-full bg-muted flex items-center justify-center">
+              <UserIcon className="h-10 w-10 text-muted-foreground" />
             </div>
           )}
 
@@ -45,7 +51,7 @@ export const ProfileDialog: React.FC = () => {
               {currentUser?.email}
             </p>
 
-            <p className="mt-2 text-xs text-gray-400">
+            <p className="mt-2 text-xs text-muted-foreground">
               UID: {currentUser?.uid}
             </p>
           </div>

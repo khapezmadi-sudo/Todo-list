@@ -89,8 +89,8 @@ export const ImportantPage = () => {
           {t("importantTasks")}
         </h1>
         {tasks.length === 0 ? (
-          <p className="text-gray-500 text-left">
-            Нет задач. Создайте новую задачу!
+          <p className="text-muted-foreground text-left">
+            {t("noImportantTasks")}
           </p>
         ) : (
           <div className="space-y-2 pb-6">

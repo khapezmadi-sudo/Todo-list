@@ -22,18 +22,18 @@ const TaskItemToggleCheckbox: React.FC<TaskItemToggleCheckboxProps> = ({
       className={cn(
         "shrink-0 w-6 h-6 rounded-full border flex items-center justify-center cursor-pointer transition relative",
         task.completed
-          ? "border-green-500 bg-green-50"
-          : "hover:border-green-500 border-gray-300",
+          ? "border-emerald-500/70 bg-emerald-500/10"
+          : "hover:border-emerald-500/70 border-border",
         isToggling && "opacity-70 pointer-events-none",
         className,
       )}
     >
       {isToggling ? (
-        <Loader2 className="w-3.5 h-3.5 text-green-500 animate-spin" />
+        <Loader2 className="w-3.5 h-3.5 text-emerald-500 animate-spin" />
       ) : (
         <Check
           className={cn(
-            "w-4 h-4 text-green-500 transition",
+            "w-4 h-4 text-emerald-500 transition",
             task.completed ? "opacity-100" : "opacity-0 group-hover:opacity-30",
           )}
         />

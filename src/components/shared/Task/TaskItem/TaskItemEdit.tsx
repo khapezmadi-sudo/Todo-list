@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 import { Timestamp } from "firebase/firestore";
+import { useTranslation } from "react-i18next";
 
 interface TaskItemEditProps {
   task: Task;
@@ -33,6 +34,7 @@ interface TaskItemEditProps {
 
 const TaskItemEdit: React.FC<TaskItemEditProps> = ({ task, setIsEditing }) => {
   const [priority, setPriority] = React.useState<number>(task.priority);
+  const { t } = useTranslation();
   const { register, handleSubmit, setValue, watch } = useForm<TaskSchemaData>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
@@ -45,12 +47,12 @@ const TaskItemEdit: React.FC<TaskItemEditProps> = ({ task, setIsEditing }) => {
   const dueDate = watch("dueDate") ?? null;
 
   const dueDateLabel = React.useMemo(() => {
-    if (!dueDate) return "Срок";
+    if (!dueDate) return t("dueDate");
     return dueDate.toLocaleDateString("ru-RU", {
       day: "2-digit",
       month: "short",
     });
-  }, [dueDate]);
+  }, [dueDate, t]);
 
   const onSubmit = async (data: TaskSchemaData): Promise<void> => {
     const myPromise = updateTask(task.id, {
@@ -84,7 +86,7 @@ const TaskItemEdit: React.FC<TaskItemEditProps> = ({ task, setIsEditing }) => {
             {...register("text")}
             placeholder="Название задачи"
             className="border-none bg-transparent shadow-none 
-          text-xl! font-bold tracking-tight
+          text-xl! font-semibold tracking-tight text-foreground
           focus-visible:ring-0 px-0 h-8
           placeholder:text-muted-foreground"
           />
@@ -142,7 +144,7 @@ const TaskItemEdit: React.FC<TaskItemEditProps> = ({ task, setIsEditing }) => {
                           })
                         }
                       >
-                        Убрать срок
+                        {t("removeDueDate")}
                       </Button>
                     </div>
                   )}
@@ -201,10 +203,7 @@ const TaskItemEdit: React.FC<TaskItemEditProps> = ({ task, setIsEditing }) => {
               <Button
                 size="sm"
                 type="submit"
-                className="h-8 px-4 text-xs font-medium 
-            bg-(--button-color) 
-            hover:bg-(--button-color)/90 
-            text-white"
+                className="h-8 px-4 text-xs font-medium bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 Сохранить изменения
               </Button>

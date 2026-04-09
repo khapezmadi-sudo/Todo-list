@@ -48,8 +48,8 @@ function ConfirmDialog({
           <div
             className={`flex h-10 w-10 items-center justify-center rounded-full ${
               variant === "destructive"
-                ? "bg-red-100 text-red-600"
-                : "bg-blue-100 text-blue-600"
+                ? "bg-destructive/10 text-destructive"
+                : "bg-primary/10 text-primary"
             }`}
           >
             <AlertTriangle className="h-6 w-6" />
@@ -73,9 +73,6 @@ function ConfirmDialog({
             variant={variant}
             onClick={handleConfirm}
             disabled={isLoading}
-            className={
-              variant === "destructive" ? "bg-red-600 hover:bg-red-700" : ""
-            }
           >
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {actionText}

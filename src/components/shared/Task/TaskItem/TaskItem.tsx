@@ -48,12 +48,12 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
           : due.toLocaleDateString("ru-RU", { day: "2-digit", month: "short" });
 
     const className = isOverdue
-      ? "bg-red-50 text-red-700 border-red-200"
+      ? "bg-destructive/10 text-destructive border-destructive/20"
       : isToday
-        ? "bg-blue-50 text-blue-700 border-blue-200"
+        ? "bg-primary/10 text-primary border-primary/20"
         : isTomorrow
-          ? "bg-sky-50 text-sky-700 border-sky-200"
-          : "bg-slate-50 text-slate-700 border-slate-200";
+          ? "bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/20"
+          : "bg-muted text-muted-foreground border-border";
 
     return (
       <span
@@ -111,10 +111,10 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
   return (
     <div
       className={cn(
-        "group p-3 border-b border-gray-200 bg-white flex items-center justify-between gap-3 transition hover:bg-gray-50 relative border-l-4",
+        "group flex items-center justify-between gap-3 rounded-lg border bg-card p-3 transition hover:bg-muted/40 relative border-l-4",
         task.priority === 3 && "border-l-red-500",
         task.priority === 2 && "border-l-amber-500",
-        task.priority === 1 && "border-l-gray-300",
+        task.priority === 1 && "border-l-border",
       )}
     >
       <div className="flex items-center gap-3 overflow-hidden">
@@ -135,14 +135,14 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
             >
               <h5
                 className={cn(
-                  "text-[16px] text-[#202020] leading-tight truncate font-medium",
-                  task.completed && "text-gray-400 line-through",
+                  "text-[16px] leading-tight truncate font-medium text-foreground",
+                  task.completed && "text-muted-foreground line-through",
                 )}
               >
                 {task.text}
               </h5>
               {task.description && (
-                <p className="text-[12px] text-[#666666] truncate mt-0.5">
+                <p className="mt-0.5 truncate text-[12px] text-muted-foreground">
                   {task.description}
                 </p>
               )}
@@ -162,7 +162,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
       >
         <button
           onClick={() => setIsEditing((prev) => !prev)}
-          className="p-1.5 hover:bg-gray-200 rounded-md text-gray-500 hover:text-blue-600 transition"
+          className="rounded-md p-1.5 text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
           title="Редактировать"
         >
           <Edit2 className="w-4 h-4" />
@@ -177,7 +177,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
           onConfirm={handleDelete}
           trigger={
             <button
-              className="p-1.5 hover:bg-gray-200 rounded-md text-gray-500 hover:text-red-600 transition"
+              className="rounded-md p-1.5 text-muted-foreground transition hover:bg-accent hover:text-destructive"
               title="Удалить"
             >
               <Trash2 className="w-4 h-4" />

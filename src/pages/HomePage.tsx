@@ -79,13 +79,17 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="h-[calc(100vh-120px)] flex justify-center">
-      <ScrollArea className="w-full max-w-2xl px-4">
-        <h1 className="sticky top-0 z-50 bg-background py-2 text-2xl font-bold mb-4 text-left">
+      <ScrollArea className="w-full max-w-3xl px-4">
+        <h1 className="sticky top-0 z-50 bg-background py-2 text-2xl font-semibold mb-4 text-left">
           {t("myTasks")}
         </h1>
 
         {tasks.length === 0 ? (
-          <p className="text-gray-500">Нет задач. Создайте новую задачу!</p>
+          <div className="rounded-lg border bg-card p-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              Нет задач. Создайте новую задачу!
+            </p>
+          </div>
         ) : (
           <div className="space-y-2 pb-6">
             {tasks.map((task) => (

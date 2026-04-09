@@ -62,14 +62,14 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
           type="text"
           placeholder={t("createTask")}
           {...register("text")}
-          className="border-none bg-transparent shadow-none text-xl! font-bold tracking-tight focus-visible:ring-0 px-0 h-auto placeholder:text-muted-foreground"
+          className="border-none bg-transparent dark:bg-transparent shadow-none text-xl! font-semibold tracking-tight focus-visible:ring-0 px-0 h-auto text-foreground placeholder:text-muted-foreground"
         />
 
         <Input
           type="text"
           placeholder={t("addDescription")}
           {...register("description")}
-          className="border-none bg-transparent shadow-none text-sm! text-muted-foreground focus-visible:ring-0 px-0 h-auto placeholder:text-muted-foreground"
+          className="border-none bg-transparent dark:bg-transparent shadow-none text-sm! focus-visible:ring-0 px-0 h-auto text-muted-foreground placeholder:text-muted-foreground"
         />
 
         <div className="flex flex-wrap gap-2 pt-2">
@@ -156,7 +156,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="h-9 px-5 font-medium bg-(--button-color) hover:bg-(--button-color)/90 text-white"
+            className="h-9 px-5 font-medium bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             {isSubmitting ? (
               <Loader2 className="h-4 w-4 animate-spin" />

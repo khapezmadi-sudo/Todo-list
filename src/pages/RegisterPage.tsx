@@ -1,11 +1,5 @@
 import React, { useCallback, useState } from "react";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-  FieldSet,
-  FieldLegend,
-} from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
@@ -72,79 +66,154 @@ export const RegisterPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex h-screen items-center justify-center">
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-130 ">
-        <FieldSet className="w-full max-w-130 rounded-3xl border-2  flex flex-col items-center justify-center p-12 bg-[#fafafa]">
-          <FieldGroup className="w-full">
-            <FieldLegend className="text-center font-bold text-2xl!">
-              {t("registration")}
-            </FieldLegend>
+    <div className="min-h-screen bg-background">
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-b from-muted/35 via-background to-background" />
+        <div className="absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute -bottom-28 left-16 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
+      </div>
 
-            {/* === ВЫВОД ОШИБКИ FIREBASE === */}
-            {firebaseError && (
-              <p className="text-red-500 text-sm text-center font-medium mt-2">
-                {firebaseError}
-              </p>
-            )}
+      <div className="mx-auto grid min-h-screen max-w-6xl items-center gap-10 px-6 py-12 lg:grid-cols-2">
+        <div className="hidden lg:block animate-in fade-in-0 slide-in-from-left-6 duration-500">
+          <div className="max-w-lg">
+            <div className="mb-8 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-border/50">
+                <div className="h-4 w-4 rounded-sm bg-primary" />
+              </div>
+              <div className="text-sm font-medium text-foreground">Todo</div>
+            </div>
 
-            <Field className="mt-2">
-              <FieldLabel htmlFor="username">{t("email")}</FieldLabel>
-              <Input
-                id="username"
-                type="text"
-                placeholder="example@example.com"
-                {...register("email")}
-              />
-              {/* === ВЫВОД ОШИБКИ ZOD ДЛЯ EMAIL === */}
-              {errors.email && (
-                <span className="text-red-500 text-xs mt-1">
-                  {errors.email.message}
-                </span>
-              )}
-            </Field>
-
-            <Field className="mt-2">
-              <FieldLabel htmlFor="password">{t("password")}</FieldLabel>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                {...register("password")}
-              />
-              {/* === ВЫВОД ОШИБКИ ZOD ДЛЯ ПАРОЛЯ === */}
-              {errors.password && (
-                <span className="text-red-500 text-xs mt-1">
-                  {errors.password.message}
-                </span>
-              )}
-            </Field>
-
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="mt-4 bg-(--button-color) cursor-pointer text-white   hover:bg-(--button-color)/95   transition-colors duration-300 ease-in-out"
-            >
-              {isSubmitting ? t("loading") : t("register")}
-            </Button>
-            <Button
-              type="button"
-              onClick={handleGoogleLogin}
-              className="bg-(--button-color) cursor-pointer text-white   hover:bg-(--button-color)/95   transition-colors duration-300 ease-in-out"
-            >
-              <img
-                src="google.svg"
-                alt="Google Icon"
-                className="w-4 h-4 mr-2"
-              />
-              Google
-            </Button>
-            <p className="text-sm text-center mt-2">
-              {t("alreadyHaveAccount")}{" "}
-              <Link to={"/login"}> {t("login")} </Link>
+            <h2 className="text-4xl font-semibold tracking-tight text-foreground">
+              {t("registerSideTitle")}
+            </h2>
+            <p className="mt-3 text-muted-foreground">
+              {t("registerSideLead")}
             </p>
-          </FieldGroup>
-        </FieldSet>
-      </form>
+
+            <div className="mt-8 grid gap-3 text-sm text-muted-foreground">
+              <div className="rounded-2xl border bg-background/40 p-5 backdrop-blur-sm">
+                <p className="font-medium text-foreground">
+                  {t("registerSidePoint1Title")}
+                </p>
+                <p className="mt-1">{t("registerSidePoint1Desc")}</p>
+              </div>
+              <div className="rounded-2xl border bg-background/40 p-5 backdrop-blur-sm">
+                <p className="font-medium text-foreground">
+                  {t("registerSidePoint2Title")}
+                </p>
+                <p className="mt-1">{t("registerSidePoint2Desc")}</p>
+              </div>
+              <div className="rounded-2xl border bg-background/40 p-5 backdrop-blur-sm">
+                <p className="font-medium text-foreground">
+                  {t("registerSidePoint3Title")}
+                </p>
+                <p className="mt-1">{t("registerSidePoint3Desc")}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="animate-in fade-in-0 slide-in-from-right-6 duration-500">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="mx-auto w-full max-w-md"
+          >
+            <div className="mb-7 text-center lg:hidden">
+              <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-border/50">
+                <div className="h-4 w-4 rounded-sm bg-primary" />
+              </div>
+            </div>
+
+            <FieldSet className="w-full rounded-2xl border bg-background/60 p-7 shadow-xl shadow-black/5 backdrop-blur-sm">
+              <FieldGroup className="w-full">
+                <div className="space-y-2">
+                  <div className="text-left text-3xl font-semibold tracking-tight text-foreground">
+                    {t("registration")}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {t("registerSideDescription")}
+                  </p>
+                </div>
+
+                {firebaseError && (
+                  <p className="text-destructive text-sm font-medium mt-4">
+                    {firebaseError}
+                  </p>
+                )}
+
+                <Field className="mt-6">
+                  <FieldLabel htmlFor="email">{t("email")}</FieldLabel>
+                  <Input
+                    id="email"
+                    type="text"
+                    placeholder="example@example.com"
+                    className="h-12 text-base"
+                    {...register("email")}
+                  />
+                  {errors.email && (
+                    <span className="text-destructive text-xs mt-1">
+                      {errors.email.message}
+                    </span>
+                  )}
+                </Field>
+
+                <Field className="mt-4">
+                  <FieldLabel htmlFor="password">{t("password")}</FieldLabel>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    className="h-12 text-base"
+                    {...register("password")}
+                  />
+                  {errors.password && (
+                    <span className="text-destructive text-xs mt-1">
+                      {errors.password.message}
+                    </span>
+                  )}
+                </Field>
+
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="mt-7 h-12 w-full bg-primary text-primary-foreground hover:bg-primary/90 text-base"
+                >
+                  {isSubmitting ? t("loading") : t("register")}
+                </Button>
+
+                <div className="mt-5 flex items-center gap-3">
+                  <div className="h-px flex-1 bg-border" />
+                  <span className="text-xs text-muted-foreground">or</span>
+                  <div className="h-px flex-1 bg-border" />
+                </div>
+
+                <div className="mt-4 grid gap-2">
+                  <Button
+                    type="button"
+                    onClick={handleGoogleLogin}
+                    variant="outline"
+                    className="w-full h-12 text-base"
+                  >
+                    <img
+                      src="google.svg"
+                      alt="Google Icon"
+                      className="w-4 h-4 mr-2"
+                    />
+                    Google
+                  </Button>
+                </div>
+
+                <p className="text-sm text-center mt-6 text-muted-foreground">
+                  {t("alreadyHaveAccount")}{" "}
+                  <Link to="/login" className="text-primary hover:underline">
+                    {t("login")}
+                  </Link>
+                </p>
+              </FieldGroup>
+            </FieldSet>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

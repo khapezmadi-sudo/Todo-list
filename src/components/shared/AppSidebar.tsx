@@ -44,8 +44,8 @@ export function AppSidebar() {
                 className={cn(
                   "cursor-pointer transition",
                   location.pathname === "/today"
-                    ? "bg-(--button-color)! text-white! hover:bg-(--button-color)! hover:text-white!"
-                    : "text-muted-foreground",
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 hover:text-sidebar-primary-foreground"
+                    : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                 )}
               >
                 <Clock className="h-4 w-4" />
@@ -58,8 +58,8 @@ export function AppSidebar() {
                 className={cn(
                   "cursor-pointer transition",
                   location.pathname === "/calendar"
-                    ? "bg-(--button-color)! text-white! hover:bg-(--button-color)! hover:text-white!"
-                    : "text-muted-foreground",
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 hover:text-sidebar-primary-foreground"
+                    : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                 )}
               >
                 <CalendarDays className="h-4 w-4" />
@@ -71,8 +71,8 @@ export function AppSidebar() {
                 className={cn(
                   "cursor-pointer transition",
                   location.pathname === "/"
-                    ? "bg-(--button-color)! text-white! hover:bg-(--button-color)! hover:text-white!"
-                    : "text-muted-foreground",
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 hover:text-sidebar-primary-foreground"
+                    : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                 )}
               >
                 <ClipboardList className="h-4 w-4" />
@@ -85,8 +85,8 @@ export function AppSidebar() {
                 className={cn(
                   "cursor-pointer transition",
                   location.pathname === "/completed"
-                    ? "bg-(--button-color)! text-white! hover:bg-(--button-color)!"
-                    : "text-muted-foreground",
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 hover:text-sidebar-primary-foreground"
+                    : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                 )}
               >
                 <ListChecks className="h-4 w-4" />
@@ -98,8 +98,8 @@ export function AppSidebar() {
                 className={cn(
                   "cursor-pointer transition items-center",
                   location.pathname === "/important"
-                    ? "bg-(--button-color)! text-white! hover:bg-(--button-color)!"
-                    : "text-muted-foreground",
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 hover:text-sidebar-primary-foreground"
+                    : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                 )}
               >
                 <Bookmark className="h-4 w-4" />
@@ -109,14 +109,13 @@ export function AppSidebar() {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter>
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarMenuItem>
-              <ToggleLanguageSelect />
-            </SidebarMenuItem>
-          </SidebarGroup>
-        </SidebarContent>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <ToggleLanguageSelect />
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );

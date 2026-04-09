@@ -52,9 +52,9 @@ const ActionsDropdown: React.FC<ActionsDropdownProps> = ({
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
-            "p-1.5 rounded-md text-gray-500 transition",
-            "hover:bg-gray-200",
-            open && "bg-gray-200 text-gray-900", // Выделяем кнопку, когда меню открыто
+            "p-1.5 rounded-md text-muted-foreground transition",
+            "hover:bg-accent hover:text-accent-foreground",
+            open && "bg-accent text-accent-foreground", // Выделяем кнопку, когда меню открыто
           )}
         >
           <MoreHorizontal className="w-4 h-4" />

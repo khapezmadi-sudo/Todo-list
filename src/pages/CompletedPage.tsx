@@ -87,7 +87,9 @@ export const CompletedPage = () => {
           {t("completedTasks")}
         </h1>
         {tasks.length === 0 ? (
-          <p className="text-gray-500 text-left">Нет выполненных задач!</p>
+          <p className="text-muted-foreground text-left">
+            {t("noCompletedTasks")}
+          </p>
         ) : (
           <div className="space-y-2 pb-6">
             {tasks.map((task) => (

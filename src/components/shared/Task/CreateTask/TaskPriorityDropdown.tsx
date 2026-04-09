@@ -15,11 +15,11 @@ interface TaskPriorityDropdownProps {
 const getPriorityStyles = (value: number) => {
   switch (value) {
     case 3:
-      return "text-red-600 border-red-300 hover:border-red-400! hover:text-red-800!";
+      return "text-destructive border-destructive/40 hover:border-destructive/60";
     case 2:
       return "text-amber-600 border-amber-300 hover:border-amber-400! hover:text-amber-800!";
     case 1:
-      return "text-gray-600 border-gray-300 hover:border-gray-400! hover:text-gray-800!";
+      return "text-muted-foreground border-border hover:border-foreground/30";
     default:
       return "";
   }
@@ -58,21 +58,21 @@ export const TaskPriorityDropdown: React.FC<TaskPriorityDropdownProps> = ({
       <DropdownMenuContent>
         <DropdownMenuItem
           onSelect={() => setPriority(1)}
-          className="text-gray-600 focus:bg-gray-100 hover:text-gray-600!"
+          className="text-muted-foreground focus:bg-accent hover:text-muted-foreground!"
         >
           Низкий
         </DropdownMenuItem>
 
         <DropdownMenuItem
           onSelect={() => setPriority(2)}
-          className="text-amber-600 focus:bg-amber-50 hover:text-amber-600!"
+          className="text-amber-600 focus:bg-accent hover:text-amber-600!"
         >
           Средний
         </DropdownMenuItem>
 
         <DropdownMenuItem
           onSelect={() => setPriority(3)}
-          className="text-red-600 focus:bg-red-50 hover:text-red-600!"
+          className="text-destructive focus:bg-accent"
         >
           Высокий
         </DropdownMenuItem>

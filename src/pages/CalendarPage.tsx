@@ -141,14 +141,14 @@ export const CalendarPage: React.FC = () => {
                 months: "w-full",
                 month: "w-full",
                 day_button:
-                  "relative data-[has-tasks=true]:after:content-[''] data-[has-tasks=true]:after:absolute data-[has-tasks=true]:after:bottom-1 data-[has-tasks=true]:after:left-1/2 data-[has-tasks=true]:after:-translate-x-1/2 data-[has-tasks=true]:after:h-1 data-[has-tasks=true]:after:w-1 data-[has-tasks=true]:after:rounded-full data-[has-tasks=true]:after:bg-(--button-color)",
+                  "relative data-[has-tasks=true]:after:content-[''] data-[has-tasks=true]:after:absolute data-[has-tasks=true]:after:bottom-1 data-[has-tasks=true]:after:left-1/2 data-[has-tasks=true]:after:-translate-x-1/2 data-[has-tasks=true]:after:h-1 data-[has-tasks=true]:after:w-1 data-[has-tasks=true]:after:rounded-full data-[has-tasks=true]:after:bg-primary",
               }}
             />
           </div>
 
           <div className="min-w-0 rounded-xl border bg-card p-4 shadow-sm">
             <div className="mb-3">
-              <h2 className="text-sm font-semibold text-slate-900 capitalize">
+              <h2 className="text-sm font-semibold text-foreground capitalize">
                 {selectedDateLabel}
               </h2>
               <p className="text-xs text-muted-foreground">
@@ -157,7 +157,9 @@ export const CalendarPage: React.FC = () => {
             </div>
 
             {tasksForSelectedDay.length === 0 ? (
-              <p className="text-gray-500">{t("noTasksForSelectedDate")}</p>
+              <p className="text-muted-foreground">
+                {t("noTasksForSelectedDate")}
+              </p>
             ) : (
               <div className="space-y-2">
                 {tasksForSelectedDay.map((task) => (
