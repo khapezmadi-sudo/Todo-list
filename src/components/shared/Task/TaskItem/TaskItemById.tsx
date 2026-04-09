@@ -6,8 +6,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../../ui/dialog";
-import { Calendar, CheckCircle2, Circle, Clock, AlignLeft } from "lucide-react";
+} from "@/components/ui/dialog";
+import {
+  Calendar,
+  CheckCircle2,
+  Circle,
+  Clock,
+  AlignLeft,
+  Hash,
+} from "lucide-react";
 import useCurrentUser from "@/store/useCurrentUser";
 
 interface TaskItemByIdProps {
@@ -30,99 +37,120 @@ const TaskItemById: React.FC<TaskItemByIdProps> = ({ task, trigger }) => {
         .toLocaleDateString("ru-RU", { day: "numeric", month: "long" })
     : null;
 
+  const formattedTime = task.createdAt?.toDate
+    ? task.createdAt.toDate().toLocaleTimeString("ru-RU", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : null;
+
+  const statusLabel = task.completed ? "Выполнено" : "Не выполнено";
+
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="gap-0 p-0 overflow-hidden">
-        <div className="p-6">
-          <DialogHeader className="mb-6">
-            <div className="flex items-center gap-2 mb-2">
-              {task.completed ? (
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/20">
-                  <CheckCircle2 size={12} /> Выполнено
-                </div>
-              ) : (
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider border border-primary/20">
-                  <Circle size={12} /> Не выполнено
-                </div>
-              )}
-            </div>
-            <DialogTitle className="text-2xl font-semibold leading-tight text-foreground">
-              {task.text}
-            </DialogTitle>
-          </DialogHeader>
+      <DialogContent className="gap-0 p-0 overflow-hidden rounded-2xl shadow-xl sm:max-w-2xl">
+        <div className="relative">
+          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-primary/10 to-transparent" />
 
-          <div className="space-y-6">
-            {/* Описание */}
-            <div className="flex gap-3">
-              <AlignLeft
-                className="shrink-0 text-muted-foreground mt-1"
-                size={18}
-              />
-              <div className="space-y-1">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-tight">
-                  Описание
-                </p>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {task.description ||
-                    "Описание к этой задаче еще не добавлено..."}
-                </p>
+          <div className="relative p-6">
+            <DialogHeader className="gap-0">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="mb-3 flex items-center gap-2">
+                    <div
+                      className={
+                        task.completed
+                          ? "inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300"
+                          : "inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary"
+                      }
+                    >
+                      {task.completed ? (
+                        <CheckCircle2 className="size-3.5" />
+                      ) : (
+                        <Circle className="size-3.5" />
+                      )}
+                      <span>{statusLabel}</span>
+                    </div>
+
+                    {task.isImportant && (
+                      <div className="inline-flex items-center rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300">
+                        Важное
+                      </div>
+                    )}
+                  </div>
+
+                  <DialogTitle className="truncate text-2xl font-semibold leading-tight text-foreground">
+                    {task.text}
+                  </DialogTitle>
+                </div>
               </div>
-            </div>
+            </DialogHeader>
 
-            {/* Мета-данные (Дата создания) */}
-            <div className="flex gap-3">
-              <Calendar
-                className="shrink-0 text-muted-foreground mt-1"
-                size={18}
-              />
-              <div className="space-y-1">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-tight">
-                  Создано
-                </p>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span>{formattedDate}</span>
-                  <span className="text-muted-foreground/40">•</span>
-                  <div className="flex items-center gap-1">
-                    <Clock size={14} />
-                    <span>
-                      {task.createdAt?.toDate().toLocaleTimeString("ru-RU", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
+            <div className="mt-6 grid grid-cols-1 gap-4">
+              <div className="rounded-xl border bg-card/60 p-4">
+                <div className="flex items-start gap-3">
+                  <AlignLeft className="mt-0.5 size-4 text-muted-foreground" />
+                  <div className="min-w-0">
+                    <div className="text-xs font-semibold uppercase tracking-tight text-muted-foreground">
+                      Описание
+                    </div>
+                    <div className="mt-1 text-sm leading-relaxed text-foreground/90">
+                      {task.description ||
+                        "Описание к этой задаче еще не добавлено..."}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="rounded-xl border bg-card/60 p-4">
+                  <div className="flex items-start gap-3">
+                    <Calendar className="mt-0.5 size-4 text-muted-foreground" />
+                    <div className="min-w-0">
+                      <div className="text-xs font-semibold uppercase tracking-tight text-muted-foreground">
+                        Создано
+                      </div>
+                      <div className="mt-1 text-sm text-foreground/90">
+                        <span>{formattedDate}</span>
+                      </div>
+                      {formattedTime && (
+                        <div className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground">
+                          <Clock className="size-3.5" />
+                          <span>{formattedTime}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-xl border bg-card/60 p-4">
+                  <div className="flex items-start gap-3">
+                    <Calendar className="mt-0.5 size-4 text-muted-foreground" />
+                    <div className="min-w-0">
+                      <div className="text-xs font-semibold uppercase tracking-tight text-muted-foreground">
+                        Срок
+                      </div>
+                      <div className="mt-1 text-sm text-foreground/90">
+                        {formattedDueDate ?? "Не задан"}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {formattedDueDate && (
-              <div className="flex gap-3">
-                <Calendar
-                  className="shrink-0 text-muted-foreground mt-1"
-                  size={18}
-                />
-                <div className="space-y-1">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-tight">
-                    Срок
-                  </p>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span>{formattedDueDate}</span>
-                  </div>
-                </div>
+            <div className="mt-6 flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Hash className="size-3.5" />
+                <span className="font-mono">{task.id.slice(0, 8)}...</span>
               </div>
-            )}
-          </div>
 
-          {/* Подвал с "madi" в стиле чипа */}
-          <div className="mt-10 pt-6 border-t flex justify-between items-center">
-            <div className="text-[10px] text-muted-foreground font-mono italic">
-              ID: {task.id.slice(0, 8)}...
-            </div>
-            <div className="px-4 py-1.5 bg-muted rounded-full border border-border">
-              <span className="text-xs font-bold text-foreground tracking-widest uppercase">
-                {currentUser?.displayName}
-              </span>
+              <div className="inline-flex items-center gap-2 rounded-full border bg-muted/40 px-3 py-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-foreground">
+                  {currentUser?.displayName ?? ""}
+                </span>
+              </div>
             </div>
           </div>
         </div>
