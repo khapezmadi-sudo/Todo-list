@@ -28,6 +28,11 @@ export const CalendarPage: React.FC = () => {
     },
   );
 
+  const [month, setMonth] = React.useState<Date>(() => {
+    const base = selectedDate ?? new Date();
+    return new Date(base.getFullYear(), base.getMonth(), 1);
+  });
+
   const isLoading = tasks === null;
 
   useEffect(() => {
@@ -121,6 +126,11 @@ export const CalendarPage: React.FC = () => {
       })
     : "Дата не выбрана";
 
+  const handleSelectDate = useCallback((date: Date | undefined) => {
+    setSelectedDate(date);
+    if (date) setMonth(new Date(date.getFullYear(), date.getMonth(), 1));
+  }, []);
+
   return (
     <div className="h-[calc(100vh-120px)] flex justify-center">
       <ScrollArea className="w-full max-w-5xl px-4">
@@ -128,14 +138,16 @@ export const CalendarPage: React.FC = () => {
           {t("calendar")}
         </h1>
 
-        <div className="grid grid-cols-1 gap-4 pb-6 lg:grid-cols-[440px_minmax(0,1fr)]">
-          <div className="rounded-xl border bg-card p-4 shadow-sm">
+        <div className="grid grid-cols-1 gap-3 pb-6 lg:grid-cols-[400px_minmax(0,1fr)]">
+          <div className="rounded-xl border bg-card p-3 shadow-sm">
             <Calendar
               mode="single"
               selected={selectedDate}
-              onSelect={setSelectedDate}
+              onSelect={handleSelectDate}
+              month={month}
+              onMonthChange={setMonth}
               modifiers={{ hasTasks: dueDates }}
-              className="w-full [--cell-size:--spacing(10)]"
+              className="w-full [--cell-size:--spacing(11)]"
               classNames={{
                 root: "w-full",
                 months: "w-full",
@@ -146,7 +158,7 @@ export const CalendarPage: React.FC = () => {
             />
           </div>
 
-          <div className="min-w-0 rounded-xl border bg-card p-4 shadow-sm">
+          <div className="min-w-0 rounded-xl border bg-card p-3 shadow-sm">
             <div className="mb-3">
               <h2 className="text-sm font-semibold text-foreground capitalize">
                 {selectedDateLabel}
