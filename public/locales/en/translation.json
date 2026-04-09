@@ -29,5 +29,14 @@
   "overdue": "Overdue",
   "noTasksForSelectedDate": "No tasks for the selected date.",
   "noTasksToday": "No tasks for today. Create a new one!",
-  "tasksCount": "{{count}} task(s)"
+  "tasksCount": "{{count}} task(s)",
+  "statsCreated": "Created",
+  "statsCompleted": "Completed",
+  "statsOpen": "Open tasks",
+  "statsCompletionRate": "Completion rate",
+  "statsOverdue": "Overdue",
+  "statsDueToday": "Due today",
+  "statsDueNext7Days": "Due in next 7 days",
+  "statsNoDueDate": "No due date",
+  "statsLast7Days": "Last 7 days"
 }

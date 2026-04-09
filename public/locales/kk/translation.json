@@ -29,5 +29,14 @@
   "overdue": "Мерзімі өткен",
   "noTasksForSelectedDate": "Таңдалған күнге тапсырма жоқ.",
   "noTasksToday": "Бүгінге тапсырма жоқ. Жаңа тапсырма құрыңыз!",
-  "tasksCount": "{{count}} тапсырма(лар)"
+  "tasksCount": "{{count}} тапсырма(лар)",
+  "statsCreated": "Құрылған",
+  "statsCompleted": "Орындалған",
+  "statsOpen": "Ашық тапсырмалар",
+  "statsCompletionRate": "Орындалу пайызы",
+  "statsOverdue": "Мерзімі өткен",
+  "statsDueToday": "Бүгін мерзімі",
+  "statsDueNext7Days": "Алдағы 7 күнде мерзімі",
+  "statsNoDueDate": "Мерзімсіз",
+  "statsLast7Days": "Соңғы 7 күн"
 }

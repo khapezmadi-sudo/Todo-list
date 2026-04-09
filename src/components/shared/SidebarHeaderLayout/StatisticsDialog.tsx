@@ -25,17 +25,6 @@ import { auth, db } from "@/firebase";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { useTranslation } from "react-i18next";
 
-const chartConfig = {
-  created: {
-    label: "Created",
-    color: "#2563eb",
-  },
-  completed: {
-    label: "Completed",
-    color: "#22c55e",
-  },
-} satisfies ChartConfig;
-
 /* ---------- Last 7 Days Generator ---------- */
 
 const today = new Date();
@@ -49,39 +38,147 @@ const last7DaysStart = (() => {
 })();
 
 export const StatisticsDialog: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const { t } = useTranslation();
+  const [createdLast7Days, setCreatedLast7Days] = useState<Task[]>([]);
+  const [openTasks, setOpenTasks] = useState<Task[]>([]);
+  const [completedTasks, setCompletedTasks] = useState<Task[]>([]);
+  const { t, i18n } = useTranslation();
+
+  const chartConfig = useMemo(() => {
+    return {
+      created: {
+        label: t("statsCreated"),
+        color: "#2563eb",
+      },
+      completed: {
+        label: t("statsCompleted"),
+        color: "#22c55e",
+      },
+    } satisfies ChartConfig;
+  }, [t]);
 
   useEffect(() => {
-    let unsubscribeSnapshot: (() => void) | undefined;
+    let unsubscribeCreated: (() => void) | undefined;
+    let unsubscribeOpen: (() => void) | undefined;
+    let unsubscribeCompleted: (() => void) | undefined;
 
     const unsubscribeAuth = auth.onAuthStateChanged((user) => {
       if (!user) {
-        setTasks([]);
+        setCreatedLast7Days([]);
+        setOpenTasks([]);
+        setCompletedTasks([]);
         return;
       }
 
-      const q = query(
+      const qCreatedLast7 = query(
         collection(db, "tasks"),
         where("userId", "==", user.uid),
         where("createdAt", ">=", last7DaysStart),
       );
 
-      unsubscribeSnapshot = onSnapshot(q, (snapshot) => {
+      const qOpen = query(
+        collection(db, "tasks"),
+        where("userId", "==", user.uid),
+        where("completed", "==", false),
+      );
+
+      const qCompleted = query(
+        collection(db, "tasks"),
+        where("userId", "==", user.uid),
+        where("completed", "==", true),
+      );
+
+      unsubscribeCreated = onSnapshot(qCreatedLast7, (snapshot) => {
         const data = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         })) as Task[];
 
-        setTasks(data);
+        setCreatedLast7Days(data);
+      });
+
+      unsubscribeOpen = onSnapshot(qOpen, (snapshot) => {
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Task[];
+
+        setOpenTasks(data);
+      });
+
+      unsubscribeCompleted = onSnapshot(qCompleted, (snapshot) => {
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Task[];
+
+        setCompletedTasks(data);
       });
     });
 
     return () => {
       unsubscribeAuth();
-      unsubscribeSnapshot?.();
+      unsubscribeCreated?.();
+      unsubscribeOpen?.();
+      unsubscribeCompleted?.();
     };
   }, []);
+
+  const dueMetrics = useMemo(() => {
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const startOfTomorrow = new Date(startOfToday);
+    startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
+
+    const startOfNext7 = new Date(startOfTomorrow);
+    startOfNext7.setDate(startOfNext7.getDate() + 7);
+
+    let overdue = 0;
+    let dueToday = 0;
+    let dueNext7Days = 0;
+    let noDueDate = 0;
+
+    openTasks.forEach((task) => {
+      const due = task.dueDate?.toDate ? task.dueDate.toDate() : null;
+      if (!due) {
+        noDueDate += 1;
+        return;
+      }
+
+      const dueTime = due.getTime();
+      if (dueTime < startOfToday.getTime()) {
+        overdue += 1;
+        return;
+      }
+
+      if (
+        dueTime >= startOfToday.getTime() &&
+        dueTime < startOfTomorrow.getTime()
+      ) {
+        dueToday += 1;
+        return;
+      }
+
+      if (
+        dueTime >= startOfTomorrow.getTime() &&
+        dueTime < startOfNext7.getTime()
+      ) {
+        dueNext7Days += 1;
+      }
+    });
+
+    return {
+      overdue,
+      dueToday,
+      dueNext7Days,
+      noDueDate,
+    };
+  }, [openTasks]);
+
+  const completionRate = useMemo(() => {
+    const total = openTasks.length + completedTasks.length;
+    if (total === 0) return 0;
+    return Math.round((completedTasks.length / total) * 100);
+  }, [openTasks.length, completedTasks.length]);
 
   const chartData = useMemo(() => {
     // 1. Генерируем дни внутри useMemo, чтобы "сегодня" всегда было актуальным
@@ -91,7 +188,7 @@ export const StatisticsDialog: React.FC = () => {
       d.setHours(0, 0, 0, 0);
       return {
         time: d.getTime(),
-        label: d.toLocaleDateString("ru-RU", { weekday: "short" }),
+        label: d.toLocaleDateString(i18n.language, { weekday: "short" }),
         created: 0,
         completed: 0,
       };
@@ -99,7 +196,7 @@ export const StatisticsDialog: React.FC = () => {
 
     const map = new Map(days.map((day) => [day.time, day]));
 
-    tasks.forEach((task) => {
+    createdLast7Days.forEach((task) => {
       if (!task.createdAt) return;
 
       const date = task.createdAt.toDate();
@@ -121,7 +218,7 @@ export const StatisticsDialog: React.FC = () => {
       created,
       completed,
     }));
-  }, [tasks]);
+  }, [createdLast7Days, i18n.language]);
 
   return (
     <Dialog>
@@ -137,7 +234,62 @@ export const StatisticsDialog: React.FC = () => {
           <DialogTitle>{t("statistics")}</DialogTitle>
         </DialogHeader>
 
-        <div className="mt-4">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-lg border bg-background p-4">
+            <div className="text-sm text-muted-foreground">
+              {t("statsOpen")}
+            </div>
+            <div className="mt-1 text-2xl font-semibold">
+              {openTasks.length}
+            </div>
+          </div>
+
+          <div className="rounded-lg border bg-background p-4">
+            <div className="text-sm text-muted-foreground">
+              {t("statsCompletionRate")}
+            </div>
+            <div className="mt-1 text-2xl font-semibold">{completionRate}%</div>
+          </div>
+
+          <div className="rounded-lg border bg-background p-4">
+            <div className="text-sm text-muted-foreground">
+              {t("statsOverdue")}
+            </div>
+            <div className="mt-1 text-2xl font-semibold">
+              {dueMetrics.overdue}
+            </div>
+          </div>
+
+          <div className="rounded-lg border bg-background p-4">
+            <div className="text-sm text-muted-foreground">
+              {t("statsDueToday")}
+            </div>
+            <div className="mt-1 text-2xl font-semibold">
+              {dueMetrics.dueToday}
+            </div>
+          </div>
+
+          <div className="rounded-lg border bg-background p-4">
+            <div className="text-sm text-muted-foreground">
+              {t("statsDueNext7Days")}
+            </div>
+            <div className="mt-1 text-2xl font-semibold">
+              {dueMetrics.dueNext7Days}
+            </div>
+          </div>
+
+          <div className="rounded-lg border bg-background p-4">
+            <div className="text-sm text-muted-foreground">
+              {t("statsNoDueDate")}
+            </div>
+            <div className="mt-1 text-2xl font-semibold">
+              {dueMetrics.noDueDate}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <div className="mb-2 text-sm font-medium">{t("statsLast7Days")}</div>
           <ChartContainer config={chartConfig} className="min-h-62.5 w-full">
             <BarChart accessibilityLayer data={chartData}>
               <CartesianGrid vertical={false} />

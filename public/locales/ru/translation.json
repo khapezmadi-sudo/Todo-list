@@ -29,5 +29,14 @@
   "overdue": "Просроченные",
   "noTasksForSelectedDate": "Нет задач на выбранную дату.",
   "noTasksToday": "Нет задач на сегодня. Создайте новую задачу!",
-  "tasksCount": "{{count}} задач(и)"
+  "tasksCount": "{{count}} задач(и)",
+  "statsCreated": "Создано",
+  "statsCompleted": "Выполнено",
+  "statsOpen": "Открытые задачи",
+  "statsCompletionRate": "Процент выполнения",
+  "statsOverdue": "Просрочено",
+  "statsDueToday": "Срок сегодня",
+  "statsDueNext7Days": "Срок в ближайшие 7 дней",
+  "statsNoDueDate": "Без срока",
+  "statsLast7Days": "Последние 7 дней"
 }
