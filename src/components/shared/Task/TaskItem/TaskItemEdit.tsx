@@ -284,7 +284,7 @@ const TaskItemEdit: React.FC<TaskItemEditProps> = ({ task, setIsEditing }) => {
           </div>
 
           {/* Footer */}
-          <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t">
+          <div className="flex flex-col gap-2 pt-2 border-t sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <Button
               variant="ghost"
               type="button"
@@ -296,12 +296,12 @@ const TaskItemEdit: React.FC<TaskItemEditProps> = ({ task, setIsEditing }) => {
               <ChevronDown className="ml-1 h-3 w-3" />
             </Button>
 
-            <div>
+            <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
               <Button
                 variant="outline"
                 size="sm"
                 type="button"
-                className="h-7 px-4 text-xs font-normal mr-2"
+                className="h-9 px-4 text-xs font-normal sm:h-7 sm:mr-2"
                 onClick={() => setIsEditing((prev) => !prev)}
               >
                 Отмена
@@ -309,7 +309,7 @@ const TaskItemEdit: React.FC<TaskItemEditProps> = ({ task, setIsEditing }) => {
               <Button
                 size="sm"
                 type="submit"
-                className="h-8 px-4 text-xs font-medium bg-primary hover:bg-primary/90 text-primary-foreground"
+                className="h-9 px-4 text-xs font-medium bg-primary hover:bg-primary/90 text-primary-foreground sm:h-8"
               >
                 Сохранить изменения
               </Button>

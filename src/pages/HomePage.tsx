@@ -79,13 +79,13 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-[calc(100svh-64px)] md:h-[calc(100vh-120px)] flex justify-center">
-      <ScrollArea className="w-full max-w-3xl px-4">
+      <ScrollArea className="w-full max-w-3xl px-3 sm:px-4">
         <h1 className="sticky top-0 z-50 bg-background py-2 text-2xl font-semibold mb-4 text-left hidden md:block">
           {t("myTasks")}
         </h1>
 
         {tasks.length === 0 ? (
-          <div className="rounded-lg border bg-card p-6 text-center">
+          <div className="rounded-lg border bg-card p-5 sm:p-6 text-center">
             <p className="text-sm text-muted-foreground">
               Нет задач. Создайте новую задачу!
             </p>

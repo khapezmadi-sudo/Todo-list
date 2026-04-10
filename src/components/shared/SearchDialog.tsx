@@ -81,7 +81,7 @@ export const SearchDialog: React.FC = () => {
         </SidebarMenuButton>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-lg p-0 overflow-hidden rounded-2xl shadow-xl top-24 translate-y-0">
+      <DialogContent className="sm:max-w-lg p-0 overflow-hidden rounded-2xl shadow-xl max-h-[90svh]">
         <div className="flex items-center gap-3 border-b px-4 py-3 bg-muted/30">
           <Search className="text-muted-foreground" size={18} />
           <Input
@@ -94,7 +94,7 @@ export const SearchDialog: React.FC = () => {
           />
         </div>
 
-        <ScrollArea className="max-h-80 overflow-y-auto min-h-25">
+        <ScrollArea className="max-h-[calc(90svh-56px)] overflow-y-auto min-h-25">
           {/* Лоадер теперь внутри контента диалога */}
           {tasks === null ? (
             <div className="flex items-center justify-center py-10">

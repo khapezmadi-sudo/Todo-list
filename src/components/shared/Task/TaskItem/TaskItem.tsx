@@ -111,13 +111,13 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
   return (
     <div
       className={cn(
-        "group flex items-center justify-between gap-3 rounded-lg border bg-card p-3 transition hover:bg-muted/40 relative border-l-4",
+        "group flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-lg border bg-card p-3 transition hover:bg-muted/40 relative border-l-4",
         task.priority === 3 && "border-l-red-500",
         task.priority === 2 && "border-l-amber-500",
         task.priority === 1 && "border-l-border",
       )}
     >
-      <div className="flex items-center gap-3 overflow-hidden">
+      <div className="flex min-w-0 items-start sm:items-center gap-3 overflow-hidden">
         {/* Чекбокс с интегрированным лоадером */}
         <TaskItemToggleCheckbox
           isToggling={isToggling}
@@ -130,7 +130,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
           task={task}
           trigger={
             <div
-              className="flex flex-col truncate cursor-pointer"
+              className="flex min-w-0 flex-col cursor-pointer"
               title="Нажмите чтобы открыть задачу"
             >
               <h5
@@ -155,14 +155,16 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
       {/* Кнопки действий */}
       <div
         className={cn(
-          "flex items-center gap-1 transition-opacity",
+          "flex items-center justify-end gap-1 transition-opacity",
           // Если меню открыто, оставляем видимым (opacity-100), иначе — по ховеру
-          isMenuOpen ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+          isMenuOpen
+            ? "opacity-100"
+            : "opacity-100 md:opacity-0 md:group-hover:opacity-100",
         )}
       >
         <button
           onClick={() => setIsEditing((prev) => !prev)}
-          className="rounded-md p-1.5 text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
+          className="rounded-md p-2 text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
           title="Редактировать"
         >
           <Edit2 className="w-4 h-4" />
@@ -177,7 +179,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
           onConfirm={handleDelete}
           trigger={
             <button
-              className="rounded-md p-1.5 text-muted-foreground transition hover:bg-accent hover:text-destructive"
+              className="rounded-md p-2 text-muted-foreground transition hover:bg-accent hover:text-destructive"
               title="Удалить"
             >
               <Trash2 className="w-4 h-4" />

@@ -80,7 +80,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
   return (
     // В handleSubmit передаем функцию onSubmit
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-      <div className="px-6 pt-6 pb-4 space-y-4">
+      <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-4 space-y-4">
         <Input
           type="text"
           placeholder={t("createTask")}
@@ -212,7 +212,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
                         shouldValidate: true,
                       });
                     }}
-                    className="h-8 w-30 text-xs"
+                    className="h-8 w-full sm:w-30 text-xs"
                   />
                   {reminderAt && (
                     <Button
@@ -241,7 +241,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
 
       <div className="border-t" />
 
-      <div className="flex items-center justify-between px-6 py-4">
+      <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between px-4 sm:px-6 py-4">
         <Button
           variant="ghost"
           size="sm"
@@ -251,7 +251,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
           <ChevronDown className="ml-1 h-3 w-3" />
         </Button>
 
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <DialogClose asChild>
             <Button variant="secondary" type="button" className="h-9 px-4">
               {t("cancel")}

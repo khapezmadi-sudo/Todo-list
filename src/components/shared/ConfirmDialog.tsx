@@ -43,7 +43,7 @@ function ConfirmDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
-      <DialogContent className="sm:max-w-100 p-6 top-45">
+      <DialogContent className="sm:max-w-md max-h-[90svh] overflow-y-auto">
         <DialogHeader className="flex flex-col items-center gap-3 text-center sm:text-left sm:items-start">
           <div
             className={`flex h-10 w-10 items-center justify-center rounded-full ${

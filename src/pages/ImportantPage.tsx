@@ -84,7 +84,7 @@ export const ImportantPage = () => {
   }
   return (
     <div className="min-h-[calc(100svh-64px)] md:h-[calc(100vh-120px)] flex justify-center">
-      <ScrollArea className="w-full max-w-2xl px-4">
+      <ScrollArea className="w-full max-w-2xl px-3 sm:px-4">
         <h1 className="sticky top-0 z-50 bg-background py-2 text-2xl font-bold mb-4 text-left hidden md:block">
           {t("importantTasks")}
         </h1>

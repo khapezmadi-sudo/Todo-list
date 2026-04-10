@@ -157,13 +157,13 @@ export const SettingsDialog: React.FC = () => {
         </DropdownMenuItem>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-xl">
+      <DialogContent className="sm:max-w-xl max-h-[90svh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t("settings")}</DialogTitle>
           <DialogDescription>{t("settingsDescription")}</DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-6">
+        <div className="grid gap-6 px-0">
           <div className="grid gap-3">
             <div className="text-sm font-semibold">{t("settingsProfile")}</div>
             <div className="grid gap-2">

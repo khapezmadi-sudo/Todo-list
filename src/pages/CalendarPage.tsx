@@ -147,7 +147,7 @@ export const CalendarPage: React.FC = () => {
               month={month}
               onMonthChange={setMonth}
               modifiers={{ hasTasks: dueDates }}
-              className="w-full [--cell-size:--spacing(11)]"
+              className="w-full [--cell-size:--spacing(9)] sm:[--cell-size:--spacing(11)]"
               classNames={{
                 root: "w-full",
                 months: "w-full",

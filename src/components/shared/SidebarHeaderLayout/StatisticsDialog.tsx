@@ -229,7 +229,7 @@ export const StatisticsDialog: React.FC = () => {
         </DropdownMenuItem>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className="sm:max-w-2xl max-h-[90svh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t("statistics")}</DialogTitle>
         </DialogHeader>
@@ -290,7 +290,10 @@ export const StatisticsDialog: React.FC = () => {
 
         <div className="mt-6">
           <div className="mb-2 text-sm font-medium">{t("statsLast7Days")}</div>
-          <ChartContainer config={chartConfig} className="min-h-62.5 w-full">
+          <ChartContainer
+            config={chartConfig}
+            className="min-h-52 sm:min-h-62.5 w-full"
+          >
             <BarChart accessibilityLayer data={chartData}>
               <CartesianGrid vertical={false} />
 

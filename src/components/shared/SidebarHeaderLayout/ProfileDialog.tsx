@@ -24,7 +24,7 @@ export const ProfileDialog: React.FC = () => {
         </DropdownMenuItem>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90svh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t("profile")}</DialogTitle>
         </DialogHeader>

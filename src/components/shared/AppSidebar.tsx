@@ -6,6 +6,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { SidebarHeaderLayout } from "./SidebarHeaderLayout/SidebarHeaderLayout";
 import {
@@ -29,6 +30,12 @@ export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAdmin } = useIsAdmin();
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  const navigateAndClose = (to: string) => {
+    navigate(to);
+    if (isMobile) setOpenMobile(false);
+  };
   return (
     <Sidebar collapsible="icon">
       <SidebarHeaderLayout />
@@ -42,7 +49,7 @@ export function AppSidebar() {
               <CreateTaskDialog />
             </SidebarMenuItem>
 
-            <SidebarMenuItem onClick={() => navigate("/today")}>
+            <SidebarMenuItem onClick={() => navigateAndClose("/today")}>
               <SidebarMenuButton
                 className={cn(
                   "cursor-pointer transition",
@@ -56,7 +63,7 @@ export function AppSidebar() {
               </SidebarMenuButton>
             </SidebarMenuItem>
 
-            <SidebarMenuItem onClick={() => navigate("/calendar")}>
+            <SidebarMenuItem onClick={() => navigateAndClose("/calendar")}>
               <SidebarMenuButton
                 className={cn(
                   "cursor-pointer transition",
@@ -69,7 +76,7 @@ export function AppSidebar() {
                 <span>{t("calendar")}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <SidebarMenuItem onClick={() => navigate("/")}>
+            <SidebarMenuItem onClick={() => navigateAndClose("/")}>
               <SidebarMenuButton
                 className={cn(
                   "cursor-pointer transition",
@@ -83,7 +90,7 @@ export function AppSidebar() {
               </SidebarMenuButton>
             </SidebarMenuItem>
 
-            <SidebarMenuItem onClick={() => navigate("/completed")}>
+            <SidebarMenuItem onClick={() => navigateAndClose("/completed")}>
               <SidebarMenuButton
                 className={cn(
                   "cursor-pointer transition",
@@ -96,7 +103,7 @@ export function AppSidebar() {
                 <span>{t("completed")}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <SidebarMenuItem onClick={() => navigate("/important")}>
+            <SidebarMenuItem onClick={() => navigateAndClose("/important")}>
               <SidebarMenuButton
                 className={cn(
                   "cursor-pointer transition items-center",
@@ -111,7 +118,7 @@ export function AppSidebar() {
             </SidebarMenuItem>
 
             {isAdmin && (
-              <SidebarMenuItem onClick={() => navigate("/admin")}>
+              <SidebarMenuItem onClick={() => navigateAndClose("/admin")}>
                 <SidebarMenuButton
                   className={cn(
                     "cursor-pointer transition items-center",

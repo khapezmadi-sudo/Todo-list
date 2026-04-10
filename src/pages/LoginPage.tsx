@@ -60,7 +60,7 @@ export const LoginPage: React.FC = () => {
         <div className="absolute -bottom-28 right-16 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
       </div>
 
-      <div className="mx-auto grid min-h-screen max-w-6xl items-center gap-10 px-6 py-12 lg:grid-cols-2">
+      <div className="mx-auto grid min-h-screen max-w-6xl items-center gap-8 px-4 py-8 sm:px-6 sm:py-12 lg:grid-cols-2">
         <div className="hidden lg:block animate-in fade-in-0 slide-in-from-left-6 duration-500">
           <div className="max-w-lg">
             <div className="mb-8 flex items-center gap-3">
@@ -111,7 +111,7 @@ export const LoginPage: React.FC = () => {
               </div>
             </div>
 
-            <FieldSet className="w-full rounded-2xl border bg-background/60 p-7 shadow-xl shadow-black/5 backdrop-blur-sm">
+            <FieldSet className="w-full rounded-2xl border bg-background/60 p-5 sm:p-7 shadow-xl shadow-black/5 backdrop-blur-sm">
               <FieldGroup className="w-full">
                 <div className="space-y-2">
                   <div className="text-left text-3xl font-semibold tracking-tight text-foreground">
