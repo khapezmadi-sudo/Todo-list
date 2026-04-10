@@ -19,12 +19,15 @@ import { useTranslation } from "react-i18next";
 
 export const TodayPage = () => {
   const [todayTasks, setTodayTasks] = useState<Task[] | null>(null);
+  const [undatedTasks, setUndatedTasks] = useState<Task[] | null>(null);
   const [overdueTasks, setOverdueTasks] = useState<Task[] | null>(null);
-  const isLoading = todayTasks === null || overdueTasks === null;
+  const isLoading =
+    todayTasks === null || undatedTasks === null || overdueTasks === null;
   const { t } = useTranslation();
 
   useEffect(() => {
     let unsubscribeTodaySnapshot: (() => void) | undefined;
+    let unsubscribeUndatedSnapshot: (() => void) | undefined;
     let unsubscribeOverdueSnapshot: (() => void) | undefined;
 
     const startOfToday = new Date();
@@ -46,6 +49,13 @@ export const TodayPage = () => {
           orderBy("dueDate", "asc"),
         );
 
+        const undatedQuery = query(
+          collection(db, "tasks"),
+          where("userId", "==", user.uid),
+          where("dueDate", "==", null),
+          orderBy("createdAt", "desc"),
+        );
+
         const overdueQuery = query(
           collection(db, "tasks"),
           where("userId", "==", user.uid),
@@ -62,6 +72,18 @@ export const TodayPage = () => {
           setTodayTasks(tasksData);
         });
 
+        unsubscribeUndatedSnapshot = onSnapshot(
+          undatedQuery,
+          (querySnapshot) => {
+            const tasksData = querySnapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            })) as Task[];
+            setUndatedTasks(tasksData);
+          },
+          () => setUndatedTasks([]),
+        );
+
         unsubscribeOverdueSnapshot = onSnapshot(
           overdueQuery,
           (querySnapshot) => {
@@ -74,6 +96,7 @@ export const TodayPage = () => {
         );
       } else {
         setTodayTasks([]);
+        setUndatedTasks([]);
         setOverdueTasks([]);
       }
     });
@@ -81,6 +104,7 @@ export const TodayPage = () => {
     return () => {
       unsubscribeAuth();
       unsubscribeTodaySnapshot?.();
+      unsubscribeUndatedSnapshot?.();
       unsubscribeOverdueSnapshot?.();
     };
   }, []);
@@ -108,6 +132,8 @@ export const TodayPage = () => {
       </div>
     );
   }
+
+  const visibleTodayTasks = [...undatedTasks, ...todayTasks];
   return (
     <div className="min-h-[calc(100svh-64px)] md:h-[calc(100vh-120px)] flex justify-center">
       <ScrollArea className="w-full max-w-2xl px-4">
@@ -133,11 +159,11 @@ export const TodayPage = () => {
           </div>
         )}
 
-        {todayTasks.length === 0 ? (
+        {visibleTodayTasks.length === 0 ? (
           <p className="text-muted-foreground">{t("noTasksToday")}</p>
         ) : (
           <div className="space-y-2 pb-6">
-            {todayTasks.map((task) => (
+            {visibleTodayTasks.map((task) => (
               <TaskItem
                 key={task.id}
                 task={task}

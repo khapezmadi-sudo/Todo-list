@@ -8,29 +8,25 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { auth, db } from "@/firebase";
-import { deleteTaskById } from "@/services/taskService";
+import { auth } from "@/firebase";
+import {
+  deleteTaskById,
+  subscribeAllTasks,
+  toggleTaskCompleted,
+} from "@/services/taskService";
+import {
+  addAdminByUid,
+  removeAdminByUid,
+  subscribeAdmins,
+} from "@/services/adminService";
+import { setUserBanned, subscribeUsers } from "@/services/userService";
 import type { Task } from "@/types/task";
 import type { AppUser } from "@/types/user";
-import {
-  collection,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
 import { toast } from "sonner";
-
-type AdminDoc = {
-  createdAt?: unknown;
-  createdBy?: string;
-};
+import { useTranslation } from "react-i18next";
 
 export const AdminPage: React.FC = () => {
+  const { t } = useTranslation();
   const [tasks, setTasks] = React.useState<Task[] | null>(null);
   const [admins, setAdmins] = React.useState<string[] | null>(null);
   const [users, setUsers] = React.useState<AppUser[] | null>(null);
@@ -41,44 +37,9 @@ export const AdminPage: React.FC = () => {
   const isLoading = tasks === null || admins === null || users === null;
 
   React.useEffect(() => {
-    const tasksQuery = query(
-      collection(db, "tasks"),
-      orderBy("createdAt", "desc"),
-    );
-    const unsubTasks = onSnapshot(
-      tasksQuery,
-      (snap) => {
-        const data = snap.docs.map((d) => ({
-          id: d.id,
-          ...d.data(),
-        })) as Task[];
-        setTasks(data);
-      },
-      () => setTasks([]),
-    );
-
-    const adminsQuery = query(collection(db, "admins"));
-    const unsubAdmins = onSnapshot(
-      adminsQuery,
-      (snap) => {
-        const ids = snap.docs.map((d) => d.id);
-        setAdmins(ids);
-      },
-      () => setAdmins([]),
-    );
-
-    const usersQuery = query(collection(db, "users"));
-    const unsubUsers = onSnapshot(
-      usersQuery,
-      (snap) => {
-        const data = snap.docs.map((d) => ({
-          uid: d.id,
-          ...(d.data() as object),
-        })) as AppUser[];
-        setUsers(data);
-      },
-      () => setUsers([]),
-    );
+    const unsubTasks = subscribeAllTasks(setTasks, () => setTasks([]));
+    const unsubAdmins = subscribeAdmins(setAdmins, () => setAdmins([]));
+    const unsubUsers = subscribeUsers(setUsers, () => setUsers([]));
 
     return () => {
       unsubTasks();
@@ -101,8 +62,7 @@ export const AdminPage: React.FC = () => {
   }, []);
 
   const handleToggleCompleted = React.useCallback(async (task: Task) => {
-    const taskRef = doc(db, "tasks", task.id);
-    await updateDoc(taskRef, { completed: !task.completed });
+    await toggleTaskCompleted(task);
   }, []);
 
   const handleAddAdmin = async () => {
@@ -114,13 +74,11 @@ export const AdminPage: React.FC = () => {
 
     try {
       setIsAddingAdmin(true);
-      const ref = doc(db, "admins", uid);
-      const payload: AdminDoc = { createdAt: serverTimestamp(), createdBy: me };
-      const p = setDoc(ref, payload, { merge: true });
+      const p = addAdminByUid(uid, me);
       toast.promise(p, {
-        loading: "Добавление...",
-        success: "Админ добавлен",
-        error: "Не удалось добавить админа",
+        loading: t("adminToastAdding"),
+        success: t("adminToastAdminAdded"),
+        error: t("adminToastAdminAddFailed"),
       });
       await p;
       setNewAdminUid("");
@@ -130,26 +88,24 @@ export const AdminPage: React.FC = () => {
   };
 
   const handleRemoveAdmin = async (uid: string) => {
-    const ref = doc(db, "admins", uid);
-    const p = deleteDoc(ref);
+    const p = removeAdminByUid(uid);
     toast.promise(p, {
-      loading: "Удаление...",
-      success: "Админ удалён",
-      error: "Не удалось удалить админа",
+      loading: t("adminToastDeleting"),
+      success: t("adminToastAdminRemoved"),
+      error: t("adminToastAdminRemoveFailed"),
     });
     await p;
   };
 
   const handleToggleUserBan = async (user: AppUser) => {
-    const ref = doc(db, "users", user.uid);
-    const p = updateDoc(ref, { banned: !user.banned });
-    const action = user.banned ? "Разблокировка" : "Блокировка";
+    const p = setUserBanned(user.uid, !user.banned);
+    const action = user.banned ? t("adminUnbanAction") : t("adminBanAction");
     toast.promise(p, {
       loading: `${action}...`,
       success: user.banned
-        ? "Пользователь разблокирован"
-        : "Пользователь заблокирован",
-      error: "Не удалось обновить пользователя",
+        ? t("adminToastUserUnbanned")
+        : t("adminToastUserBanned"),
+      error: t("adminToastUserUpdateFailed"),
     });
     await p;
   };
@@ -177,27 +133,35 @@ export const AdminPage: React.FC = () => {
     <div className="min-h-[calc(100svh-64px)] md:h-[calc(100vh-120px)] flex justify-center">
       <ScrollArea className="w-full max-w-6xl px-3 sm:px-4">
         <div className="mb-4 flex flex-col gap-2">
-          <h1 className="text-2xl font-bold">Admin Panel</h1>
+          <h1 className="text-2xl font-bold">{t("adminPanelTitle")}</h1>
           <p className="text-sm text-muted-foreground">
-            Управление админами и просмотр всех задач.
+            {t("adminPanelSubtitle")}
           </p>
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div className="rounded-xl border bg-card p-3">
-            <div className="text-xs text-muted-foreground">Всего задач</div>
+            <div className="text-xs text-muted-foreground">
+              {t("adminStatsTotalTasks")}
+            </div>
             <div className="mt-1 text-xl font-semibold">{stats.total}</div>
           </div>
           <div className="rounded-xl border bg-card p-3">
-            <div className="text-xs text-muted-foreground">Выполнено</div>
+            <div className="text-xs text-muted-foreground">
+              {t("adminStatsCompleted")}
+            </div>
             <div className="mt-1 text-xl font-semibold">{stats.completed}</div>
           </div>
           <div className="rounded-xl border bg-card p-3">
-            <div className="text-xs text-muted-foreground">Важные</div>
+            <div className="text-xs text-muted-foreground">
+              {t("adminStatsImportant")}
+            </div>
             <div className="mt-1 text-xl font-semibold">{stats.important}</div>
           </div>
           <div className="rounded-xl border bg-card p-3">
-            <div className="text-xs text-muted-foreground">Пользователей</div>
+            <div className="text-xs text-muted-foreground">
+              {t("adminStatsUsers")}
+            </div>
             <div className="mt-1 text-xl font-semibold">{stats.users}</div>
           </div>
         </div>
@@ -207,34 +171,38 @@ export const AdminPage: React.FC = () => {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[420px_minmax(0,1fr)]">
           <div className="rounded-xl border bg-card p-4">
             <div className="mb-3">
-              <div className="text-sm font-semibold">Админы</div>
+              <div className="text-sm font-semibold">
+                {t("adminAdminsTitle")}
+              </div>
               <div className="text-xs text-muted-foreground">
-                Коллекция: admins (docId = uid)
+                {t("adminAdminsCollectionHint")}
               </div>
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="admin-uid">Добавить админа по UID</Label>
+              <Label htmlFor="admin-uid">{t("adminAddAdminLabel")}</Label>
               <div className="flex gap-2">
                 <Input
                   id="admin-uid"
                   value={newAdminUid}
                   onChange={(e) => setNewAdminUid(e.target.value)}
-                  placeholder="UID"
+                  placeholder={t("adminUidPlaceholder")}
                 />
                 <Button
                   type="button"
                   onClick={handleAddAdmin}
                   disabled={!newAdminUid.trim() || isAddingAdmin}
                 >
-                  Добавить
+                  {t("adminAdd")}
                 </Button>
               </div>
             </div>
 
             <div className="mt-4 space-y-2">
               {admins!.length === 0 ? (
-                <div className="text-sm text-muted-foreground">Админов нет</div>
+                <div className="text-sm text-muted-foreground">
+                  {t("adminNoAdmins")}
+                </div>
               ) : (
                 admins!.map((uid) => (
                   <div
@@ -250,27 +218,31 @@ export const AdminPage: React.FC = () => {
                       onClick={() => handleRemoveAdmin(uid)}
                       disabled={uid === auth.currentUser?.uid}
                     >
-                      Удалить
+                      {t("delete")}
                     </Button>
                   </div>
                 ))
               )}
               <div className="text-xs text-muted-foreground">
-                Нельзя удалить самого себя.
+                {t("adminCannotRemoveSelf")}
               </div>
             </div>
           </div>
 
           <div className="min-w-0 rounded-xl border bg-card p-4">
             <div className="mb-3">
-              <div className="text-sm font-semibold">Все задачи</div>
+              <div className="text-sm font-semibold">
+                {t("adminAllTasksTitle")}
+              </div>
               <div className="text-xs text-muted-foreground">
-                Видно только админам.
+                {t("adminAllTasksHint")}
               </div>
             </div>
 
             {tasks!.length === 0 ? (
-              <div className="text-sm text-muted-foreground">Задач нет</div>
+              <div className="text-sm text-muted-foreground">
+                {t("adminNoTasks")}
+              </div>
             ) : (
               <div className="space-y-2">
                 {tasks!.map((task) => (
@@ -291,23 +263,25 @@ export const AdminPage: React.FC = () => {
         <div className="rounded-xl border bg-card p-4">
           <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-sm font-semibold">Пользователи</div>
+              <div className="text-sm font-semibold">
+                {t("adminUsersTitle")}
+              </div>
               <div className="text-xs text-muted-foreground">
-                Soft-ban через поле users/{"{uid}"}.banned
+                {t("adminUsersBanHint")}
               </div>
             </div>
             <div className="w-full sm:max-w-xs">
               <Input
                 value={usersQueryText}
                 onChange={(e) => setUsersQueryText(e.target.value)}
-                placeholder="Поиск: uid / email / имя"
+                placeholder={t("adminUsersSearchPlaceholder")}
               />
             </div>
           </div>
 
           {filteredUsers.length === 0 ? (
             <div className="text-sm text-muted-foreground">
-              Пользователей нет
+              {t("adminNoUsers")}
             </div>
           ) : (
             <div className="space-y-2">
@@ -332,7 +306,7 @@ export const AdminPage: React.FC = () => {
 
                   <div className="flex items-center justify-between gap-3 sm:justify-end">
                     <div className="text-xs text-muted-foreground">
-                      {u.banned ? "Заблокирован" : "Активен"}
+                      {u.banned ? t("adminUserBanned") : t("adminUserActive")}
                     </div>
                     <Switch
                       checked={Boolean(u.banned)}

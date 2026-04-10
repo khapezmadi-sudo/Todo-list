@@ -15,6 +15,7 @@ import {
   type Unsubscribe,
 } from "firebase/firestore";
 import { toast } from "sonner";
+import i18next from "i18next";
 
 function playBeep(volume: number) {
   try {
@@ -122,7 +123,12 @@ export function useTaskReminders(uid: string | null | undefined) {
 
       localStorage.setItem(key, "1");
 
-      toast(`Напоминание: ${t.text}`);
+      toast(
+        i18next.t("reminderToast", { text: t.text } as unknown as Record<
+          string,
+          unknown
+        >),
+      );
 
       if (settings.soundEnabled) {
         playBeep(settings.volume);
@@ -142,7 +148,7 @@ export function useTaskReminders(uid: string | null | undefined) {
         Notification.permission === "granted"
       ) {
         try {
-          new Notification("Напоминание", { body: t.text });
+          new Notification(i18next.t("reminderTitle"), { body: t.text });
         } catch {
           // ignore
         }

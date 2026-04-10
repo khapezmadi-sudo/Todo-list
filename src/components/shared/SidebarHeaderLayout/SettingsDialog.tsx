@@ -66,9 +66,9 @@ export const SettingsDialog: React.FC = () => {
       setIsSavingName(true);
       const p = updateProfile(user, { displayName: nextName });
       toast.promise(p, {
-        loading: "Сохранение...",
-        success: "Имя обновлено",
-        error: "Не удалось обновить имя",
+        loading: t("settingsToastSaving"),
+        success: t("settingsToastNameUpdated"),
+        error: t("settingsToastNameUpdateFailed"),
       });
       await p;
       setCurrentUser(auth.currentUser);
@@ -86,9 +86,9 @@ export const SettingsDialog: React.FC = () => {
       setIsSavingName(true);
       const p = updateProfile(user, { photoURL: next || null });
       toast.promise(p, {
-        loading: "Сохранение...",
-        success: "Фото обновлено",
-        error: "Не удалось обновить фото",
+        loading: t("settingsToastSaving"),
+        success: t("settingsToastPhotoUpdated"),
+        error: t("settingsToastPhotoUpdateFailed"),
       });
       await p;
       setCurrentUser(auth.currentUser);
@@ -105,22 +105,20 @@ export const SettingsDialog: React.FC = () => {
     );
 
     if (!hasPasswordProvider) {
-      toast.message(
-        "Сброс пароля доступен только для аккаунтов с входом по Email/Password.",
-      );
+      toast.message(t("settingsResetPasswordOnlyEmailPassword"));
       return;
     }
     if (!email) {
-      toast.error("У аккаунта нет email");
+      toast.error(t("settingsNoEmailOnAccount"));
       return;
     }
     try {
       setIsSendingReset(true);
       const p = sendPasswordResetEmail(auth, email);
       toast.promise(p, {
-        loading: "Отправляем письмо...",
-        success: "Письмо для сброса пароля отправлено",
-        error: "Не удалось отправить письмо",
+        loading: t("settingsToastSendingEmail"),
+        success: t("settingsToastResetEmailSent"),
+        error: t("settingsToastResetEmailFailed"),
       });
       await p;
     } finally {
@@ -135,9 +133,9 @@ export const SettingsDialog: React.FC = () => {
       setIsDeleting(true);
       const p = deleteUser(user);
       toast.promise(p, {
-        loading: "Удаляем аккаунт...",
-        success: "Аккаунт удалён",
-        error: "Не удалось удалить аккаунт",
+        loading: t("settingsToastDeletingAccount"),
+        success: t("settingsToastAccountDeleted"),
+        error: t("settingsToastAccountDeleteFailed"),
       });
       await p;
       setOpen(false);
@@ -162,22 +160,20 @@ export const SettingsDialog: React.FC = () => {
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>{t("settings")}</DialogTitle>
-          <DialogDescription>
-            Управляй профилем и безопасностью аккаунта.
-          </DialogDescription>
+          <DialogDescription>{t("settingsDescription")}</DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-6">
           <div className="grid gap-3">
-            <div className="text-sm font-semibold">Профиль</div>
+            <div className="text-sm font-semibold">{t("settingsProfile")}</div>
             <div className="grid gap-2">
-              <Label htmlFor="settings-display-name">Имя</Label>
+              <Label htmlFor="settings-display-name">{t("settingsName")}</Label>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <Input
                   id="settings-display-name"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="Введите имя"
+                  placeholder={t("settingsNamePlaceholder")}
                   className="h-10"
                 />
                 <Button
@@ -186,12 +182,12 @@ export const SettingsDialog: React.FC = () => {
                   disabled={!canSaveName || isSavingName}
                   className="h-10"
                 >
-                  Сохранить
+                  {t("save")}
                 </Button>
               </div>
 
               <Label htmlFor="settings-photo-url" className="mt-2">
-                Фото (URL)
+                {t("settingsPhotoUrl")}
               </Label>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <div className="flex items-center gap-3">
@@ -199,7 +195,7 @@ export const SettingsDialog: React.FC = () => {
                     {photoURL.trim() ? (
                       <img
                         src={photoURL.trim()}
-                        alt="Avatar preview"
+                        alt={t("settingsAvatarPreviewAlt")}
                         className="h-full w-full object-cover"
                         onError={(e) => {
                           e.currentTarget.src = "";
@@ -222,12 +218,12 @@ export const SettingsDialog: React.FC = () => {
                   disabled={!canSavePhoto || isSavingName}
                   className="h-10"
                 >
-                  Обновить
+                  {t("update")}
                 </Button>
               </div>
 
               <div className="text-xs text-muted-foreground">
-                Email: {currentUser?.email ?? "—"}
+                {t("email")}: {currentUser?.email ?? "—"}
               </div>
             </div>
           </div>
@@ -235,10 +231,14 @@ export const SettingsDialog: React.FC = () => {
           <Separator />
 
           <div className="grid gap-3">
-            <div className="text-sm font-semibold">Уведомления</div>
+            <div className="text-sm font-semibold">
+              {t("settingsNotifications")}
+            </div>
 
             <div className="flex items-center justify-between gap-3">
-              <div className="text-sm text-muted-foreground">Звук</div>
+              <div className="text-sm text-muted-foreground">
+                {t("settingsSound")}
+              </div>
               <Switch
                 checked={notificationSettings.soundEnabled}
                 onCheckedChange={notificationSettings.setSoundEnabled}
@@ -246,7 +246,7 @@ export const SettingsDialog: React.FC = () => {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="notif-volume">Громкость</Label>
+              <Label htmlFor="notif-volume">{t("settingsVolume")}</Label>
               <Input
                 id="notif-volume"
                 type="number"
@@ -259,13 +259,13 @@ export const SettingsDialog: React.FC = () => {
                 }
               />
               <div className="text-xs text-muted-foreground">
-                0 — без звука, 1 — максимум.
+                {t("settingsVolumeHint")}
               </div>
             </div>
 
             <div className="flex items-center justify-between gap-3">
               <div className="text-sm text-muted-foreground">
-                Вибрация (моб.)
+                {t("settingsVibration")}
               </div>
               <Switch
                 checked={notificationSettings.vibrationEnabled}
@@ -275,7 +275,7 @@ export const SettingsDialog: React.FC = () => {
 
             <div className="flex items-center justify-between gap-3">
               <div className="text-sm text-muted-foreground">
-                Системные уведомления браузера
+                {t("settingsSystemNotifications")}
               </div>
               <Switch
                 checked={notificationSettings.systemNotificationsEnabled}
@@ -298,7 +298,7 @@ export const SettingsDialog: React.FC = () => {
 
             <div className="flex items-center justify-between gap-3">
               <div className="text-sm text-muted-foreground">
-                Повторять пока не выполнено
+                {t("settingsRepeatUntilDone")}
               </div>
               <Switch
                 checked={notificationSettings.repeatEnabled}
@@ -308,7 +308,9 @@ export const SettingsDialog: React.FC = () => {
 
             {notificationSettings.repeatEnabled && (
               <div className="grid gap-2">
-                <Label htmlFor="notif-repeat">Интервал повтора (мин.)</Label>
+                <Label htmlFor="notif-repeat">
+                  {t("settingsRepeatInterval")}
+                </Label>
                 <Input
                   id="notif-repeat"
                   type="number"
@@ -328,10 +330,10 @@ export const SettingsDialog: React.FC = () => {
           <Separator />
 
           <div className="grid gap-3">
-            <div className="text-sm font-semibold">Безопасность</div>
+            <div className="text-sm font-semibold">{t("settingsSecurity")}</div>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-sm text-muted-foreground">
-                Сбросить пароль через email.
+                {t("settingsResetPasswordDescription")}
               </div>
               <Button
                 type="button"
@@ -339,7 +341,7 @@ export const SettingsDialog: React.FC = () => {
                 onClick={handlePasswordReset}
                 disabled={!currentUser?.email || isSendingReset}
               >
-                Отправить письмо
+                {t("settingsSendResetEmail")}
               </Button>
             </div>
           </div>
@@ -348,17 +350,17 @@ export const SettingsDialog: React.FC = () => {
 
           <div className="grid gap-3">
             <div className="text-sm font-semibold text-destructive">
-              Опасная зона
+              {t("settingsDangerZone")}
             </div>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-sm text-muted-foreground">
-                Удаление аккаунта необратимо.
+                {t("settingsDeleteAccountHint")}
               </div>
 
               <ConfirmDialog
-                title="Удалить аккаунт?"
-                description="Это действие необратимо. Ваш аккаунт будет удалён."
-                actionText="Удалить"
+                title={t("settingsDeleteAccountTitle")}
+                description={t("settingsDeleteAccountDescription")}
+                actionText={t("delete")}
                 variant="destructive"
                 isLoading={isDeleting}
                 onConfirm={handleDeleteAccount}
@@ -368,7 +370,7 @@ export const SettingsDialog: React.FC = () => {
                     variant="destructive"
                     disabled={!currentUser}
                   >
-                    Удалить аккаунт
+                    {t("settingsDeleteAccountButton")}
                   </Button>
                 }
               />
