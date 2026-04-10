@@ -71,16 +71,16 @@ export const HomePage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="h-[calc(100vh-120px)] flex items-center justify-center">
+      <div className="min-h-[calc(100svh-64px)] md:h-[calc(100vh-120px)] flex items-center justify-center">
         <Loading />
       </div>
     );
   }
 
   return (
-    <div className="h-[calc(100vh-120px)] flex justify-center">
+    <div className="min-h-[calc(100svh-64px)] md:h-[calc(100vh-120px)] flex justify-center">
       <ScrollArea className="w-full max-w-3xl px-4">
-        <h1 className="sticky top-0 z-50 bg-background py-2 text-2xl font-semibold mb-4 text-left">
+        <h1 className="sticky top-0 z-50 bg-background py-2 text-2xl font-semibold mb-4 text-left hidden md:block">
           {t("myTasks")}
         </h1>
 
