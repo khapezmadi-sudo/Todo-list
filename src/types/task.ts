@@ -7,6 +7,8 @@ export interface Task {
   userId: string;
   createdAt: Timestamp;
   dueDate?: Timestamp | null;
+  reminderAt?: Timestamp | null;
+  reminderFiredAt?: Timestamp | null;
   completed: boolean;
   isImportant: boolean;
   priority: number;

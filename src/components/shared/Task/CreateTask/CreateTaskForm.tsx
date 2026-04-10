@@ -44,7 +44,10 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isDueDateOpen, setIsDueDateOpen] = React.useState(false);
+  const [isReminderOpen, setIsReminderOpen] = React.useState(false);
   const dueDate = useWatch({ control, name: "dueDate" }) ?? null;
+  const reminderAt = useWatch({ control, name: "reminderAt" }) ?? null;
+  const [reminderTime, setReminderTime] = React.useState<string>("09:00");
 
   const dueDateLabel = React.useMemo(() => {
     if (!dueDate) return t("dueDate");
@@ -53,6 +56,26 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
       month: "short",
     });
   }, [dueDate, t]);
+
+  const reminderLabel = React.useMemo(() => {
+    if (!reminderAt) return "Напоминание";
+    const datePart = reminderAt.toLocaleDateString("ru-RU", {
+      day: "2-digit",
+      month: "short",
+    });
+    const timePart = reminderAt.toLocaleTimeString("ru-RU", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    return `${datePart} • ${timePart}`;
+  }, [reminderAt]);
+
+  React.useEffect(() => {
+    if (!reminderAt) return;
+    const hh = String(reminderAt.getHours()).padStart(2, "0");
+    const mm = String(reminderAt.getMinutes()).padStart(2, "0");
+    setReminderTime(`${hh}:${mm}`);
+  }, [reminderAt]);
 
   return (
     // В handleSubmit передаем функцию onSubmit
@@ -123,14 +146,96 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
             </PopoverContent>
           </Popover>
           <TaskPriorityDropdown setPriority={setPriority} priority={priority} />
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="h-8 text-xs font-normal"
-          >
-            <Bell className="mr-2 h-3.5 w-3.5" /> Напоминание
-          </Button>
+
+          <Popover open={isReminderOpen} onOpenChange={setIsReminderOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs font-normal"
+              >
+                <Bell className="mr-2 h-3.5 w-3.5" /> {reminderLabel}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <div className="p-2">
+                <CalendarPicker
+                  mode="single"
+                  selected={reminderAt ?? undefined}
+                  onSelect={(date) => {
+                    if (!date) {
+                      setValue("reminderAt", null, {
+                        shouldDirty: true,
+                        shouldTouch: true,
+                        shouldValidate: true,
+                      });
+                      return;
+                    }
+
+                    const [h, m] = reminderTime
+                      .split(":")
+                      .map((x) => Number(x));
+                    const d = new Date(date);
+                    d.setHours(Number.isFinite(h) ? h : 9);
+                    d.setMinutes(Number.isFinite(m) ? m : 0);
+                    d.setSeconds(0);
+                    d.setMilliseconds(0);
+
+                    setValue("reminderAt", d, {
+                      shouldDirty: true,
+                      shouldTouch: true,
+                      shouldValidate: true,
+                    });
+                    setIsReminderOpen(false);
+                  }}
+                  initialFocus
+                />
+
+                <div className="pt-2 flex items-center justify-between gap-2">
+                  <Input
+                    type="time"
+                    value={reminderTime}
+                    onChange={(e) => {
+                      const next = e.target.value;
+                      setReminderTime(next);
+                      if (!reminderAt) return;
+                      const [h, m] = next.split(":").map((x) => Number(x));
+                      const d = new Date(reminderAt);
+                      d.setHours(Number.isFinite(h) ? h : d.getHours());
+                      d.setMinutes(Number.isFinite(m) ? m : d.getMinutes());
+                      d.setSeconds(0);
+                      d.setMilliseconds(0);
+                      setValue("reminderAt", d, {
+                        shouldDirty: true,
+                        shouldTouch: true,
+                        shouldValidate: true,
+                      });
+                    }}
+                    className="h-8 w-30 text-xs"
+                  />
+                  {reminderAt && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 text-xs font-normal"
+                      onClick={() => {
+                        setValue("reminderAt", null, {
+                          shouldDirty: true,
+                          shouldTouch: true,
+                          shouldValidate: true,
+                        });
+                        setIsReminderOpen(false);
+                      }}
+                    >
+                      Убрать
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 

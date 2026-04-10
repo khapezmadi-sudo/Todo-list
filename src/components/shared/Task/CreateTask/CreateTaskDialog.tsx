@@ -21,6 +21,7 @@ export type CreateTask = {
   isImportant: boolean;
   createdAt: FieldValue;
   dueDate?: Timestamp | null;
+  reminderAt?: Timestamp | null;
   priority: number;
 };
 
@@ -31,6 +32,7 @@ export const taskSchema = z.object({
     .max(100, "Максимум 100 символов"),
   description: z.string().optional(),
   dueDate: z.date().nullable().optional(),
+  reminderAt: z.date().nullable().optional(),
 });
 
 export type TaskSchemaData = z.infer<typeof taskSchema>;
@@ -49,7 +51,12 @@ export function CreateTaskDialog() {
     formState: { isSubmitting },
   } = useForm<TaskSchemaData>({
     resolver: zodResolver(taskSchema),
-    defaultValues: { text: "", description: "", dueDate: null },
+    defaultValues: {
+      text: "",
+      description: "",
+      dueDate: null,
+      reminderAt: null,
+    },
   });
 
   const addTask = async (data: TaskSchemaData) => {
@@ -64,6 +71,7 @@ export function CreateTaskDialog() {
       isImportant: false,
       createdAt: serverTimestamp(),
       dueDate: data.dueDate ? Timestamp.fromDate(data.dueDate) : null,
+      reminderAt: data.reminderAt ? Timestamp.fromDate(data.reminderAt) : null,
       priority: priority,
     };
     const myPromise = createTask(newTaskData);

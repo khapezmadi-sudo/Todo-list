@@ -16,6 +16,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { auth } from "@/firebase";
+import { Switch } from "@/components/ui/switch";
+import { useNotificationSettings } from "@/store/useNotificationSettings";
 import {
   deleteUser,
   sendPasswordResetEmail,
@@ -28,6 +30,7 @@ export const SettingsDialog: React.FC = () => {
   const { t } = useTranslation();
   const currentUser = useCurrentUser((state) => state.currentUser);
   const setCurrentUser = useCurrentUser((state) => state.setCurrentUser);
+  const notificationSettings = useNotificationSettings();
   const [open, setOpen] = React.useState(false);
   const [displayName, setDisplayName] = React.useState<string>(
     currentUser?.displayName ?? "",
@@ -227,6 +230,99 @@ export const SettingsDialog: React.FC = () => {
                 Email: {currentUser?.email ?? "—"}
               </div>
             </div>
+          </div>
+
+          <Separator />
+
+          <div className="grid gap-3">
+            <div className="text-sm font-semibold">Уведомления</div>
+
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-sm text-muted-foreground">Звук</div>
+              <Switch
+                checked={notificationSettings.soundEnabled}
+                onCheckedChange={notificationSettings.setSoundEnabled}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="notif-volume">Громкость</Label>
+              <Input
+                id="notif-volume"
+                type="number"
+                min={0}
+                max={1}
+                step={0.05}
+                value={notificationSettings.volume}
+                onChange={(e) =>
+                  notificationSettings.setVolume(Number(e.target.value || 0))
+                }
+              />
+              <div className="text-xs text-muted-foreground">
+                0 — без звука, 1 — максимум.
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-sm text-muted-foreground">
+                Вибрация (моб.)
+              </div>
+              <Switch
+                checked={notificationSettings.vibrationEnabled}
+                onCheckedChange={notificationSettings.setVibrationEnabled}
+              />
+            </div>
+
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-sm text-muted-foreground">
+                Системные уведомления браузера
+              </div>
+              <Switch
+                checked={notificationSettings.systemNotificationsEnabled}
+                onCheckedChange={async (v) => {
+                  notificationSettings.setSystemNotificationsEnabled(v);
+                  if (
+                    v &&
+                    typeof Notification !== "undefined" &&
+                    Notification.permission !== "granted"
+                  ) {
+                    try {
+                      await Notification.requestPermission();
+                    } catch {
+                      // ignore
+                    }
+                  }
+                }}
+              />
+            </div>
+
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-sm text-muted-foreground">
+                Повторять пока не выполнено
+              </div>
+              <Switch
+                checked={notificationSettings.repeatEnabled}
+                onCheckedChange={notificationSettings.setRepeatEnabled}
+              />
+            </div>
+
+            {notificationSettings.repeatEnabled && (
+              <div className="grid gap-2">
+                <Label htmlFor="notif-repeat">Интервал повтора (мин.)</Label>
+                <Input
+                  id="notif-repeat"
+                  type="number"
+                  min={1}
+                  step={1}
+                  value={notificationSettings.repeatMinutes}
+                  onChange={(e) =>
+                    notificationSettings.setRepeatMinutes(
+                      Number(e.target.value || 1),
+                    )
+                  }
+                />
+              </div>
+            )}
           </div>
 
           <Separator />

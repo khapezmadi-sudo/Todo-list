@@ -14,6 +14,7 @@ import {
   ClipboardList,
   Clock,
   ListChecks,
+  Shield,
 } from "lucide-react";
 import { CreateTaskDialog } from "./Task/CreateTask/CreateTaskDialog";
 import { useLocation, useNavigate } from "react-router";
@@ -21,11 +22,13 @@ import { cn } from "@/lib/utils";
 import { SearchDialog } from "./SearchDialog";
 import { ToggleLanguageSelect } from "./ToggleLanguageSelect";
 import { useTranslation } from "react-i18next";
+import { useIsAdmin } from "@/hooks/use-is-admin";
 
 export function AppSidebar() {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAdmin } = useIsAdmin();
   return (
     <Sidebar collapsible="icon">
       <SidebarHeaderLayout />
@@ -106,6 +109,22 @@ export function AppSidebar() {
                 <span>{t("important")}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
+
+            {isAdmin && (
+              <SidebarMenuItem onClick={() => navigate("/admin")}>
+                <SidebarMenuButton
+                  className={cn(
+                    "cursor-pointer transition items-center",
+                    location.pathname === "/admin"
+                      ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 hover:text-sidebar-primary-foreground"
+                      : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                  )}
+                >
+                  <Shield className="h-4 w-4" />
+                  <span>Admin</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>

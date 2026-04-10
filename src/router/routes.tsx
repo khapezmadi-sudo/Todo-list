@@ -1,4 +1,5 @@
 import { lazy, type ReactNode } from "react";
+import { AdminRoute } from "@/components/shared/AdminRoute";
 
 // Динамические импорты
 const HomePage = lazy(() =>
@@ -34,6 +35,12 @@ const CalendarPage = lazy(() =>
   })),
 );
 
+const AdminPage = lazy(() =>
+  import("@/pages/AdminPage").then((module) => ({
+    default: module.AdminPage,
+  })),
+);
+
 type RouteType = {
   path: string;
   element: ReactNode;
@@ -45,6 +52,14 @@ export const PRIVATE_ROUTES: RouteType[] = [
   { path: "/important", element: <ImportantPage /> },
   { path: "/today", element: <TodayPage /> },
   { path: "/calendar", element: <CalendarPage /> },
+  {
+    path: "/admin",
+    element: (
+      <AdminRoute>
+        <AdminPage />
+      </AdminRoute>
+    ),
+  },
 ];
 
 export const PUBLIC_ROUTES: RouteType[] = [

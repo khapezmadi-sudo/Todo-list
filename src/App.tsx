@@ -2,10 +2,11 @@ import { useEffect } from "react";
 import "./App.css";
 import { AppRouter } from "./components/shared/AppRouter";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./firebase";
+import { auth, db } from "./firebase";
 import { Loading } from "./components/shared/Loading";
 import useCurrentUser from "./store/useCurrentUser";
 import { Toaster } from "./components/ui/sonner";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 
 function App() {
   const setCurrentUser = useCurrentUser((state) => state.setCurrentUser);
@@ -13,6 +14,21 @@ function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
+        const ref = doc(db, "users", user.uid);
+        setDoc(
+          ref,
+          {
+            uid: user.uid,
+            email: user.email ?? null,
+            displayName: user.displayName ?? null,
+            photoURL: user.photoURL ?? null,
+            banned: false,
+            lastLoginAt: serverTimestamp(),
+          },
+          { merge: true },
+        ).catch(() => {
+          // ignore
+        });
         setCurrentUser(user);
       } else {
         setCurrentUser(null);
