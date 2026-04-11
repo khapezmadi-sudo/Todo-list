@@ -50,7 +50,7 @@ export const VerifyEmailPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-svh flex items-center justify-center px-4">
+    <div className="min-h-d-screen flex items-center justify-center px-4 py-safe">
       <div className="w-full max-w-md rounded-xl border bg-card p-6">
         <div className="text-xl font-semibold">Подтверди email</div>
         <div className="mt-2 text-sm text-muted-foreground">
@@ -66,7 +66,7 @@ export const VerifyEmailPage: React.FC = () => {
               Похоже, ты не в аккаунте. Войди ещё раз и вернись сюда.
               <div className="mt-2">
                 <Link
-                  className="text-primary underline underline-offset-4"
+                  className="text-primary underline underline-offset-4 inline-block py-2 px-1 -mx-1 relative z-10"
                   to="/login"
                 >
                   Перейти на вход

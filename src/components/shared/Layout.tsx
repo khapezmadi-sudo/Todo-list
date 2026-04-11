@@ -34,19 +34,21 @@ export default function Layout() {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-background text-foreground">
+      <div className="flex min-h-d-screen w-full bg-background text-foreground">
         <AppSidebar />
         <SidebarInset>
-          {/* Mobile top bar */}
-          <div className="md:hidden sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/60">
+          {/* Mobile top bar with accent color */}
+          <div className="md:hidden sticky top-0 z-40 w-full border-b border-primary/20 bg-primary/95 backdrop-blur supports-backdrop-filter:bg-primary/90 pt-safe">
             <div className="flex h-14 items-center gap-2 px-3">
-              <SidebarTrigger className="" />
+              <SidebarTrigger className="text-primary-foreground hover:bg-primary-foreground/10" />
               <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-medium">{pageTitle}</div>
+                <div className="truncate text-sm font-medium text-primary-foreground">
+                  {pageTitle}
+                </div>
               </div>
             </div>
           </div>
-          <main className="flex-1 w-full min-w-0">
+          <main className="flex-1 w-full min-w-0 pb-safe">
             <div className="w-full px-3 py-3 sm:px-6 sm:py-6">
               <SidebarTrigger className="hidden md:inline-flex" />
               <div className="mt-3 md:mt-4">

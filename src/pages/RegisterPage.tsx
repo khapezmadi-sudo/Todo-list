@@ -66,14 +66,14 @@ export const RegisterPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-d-screen bg-background py-safe">
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-b from-muted/35 via-background to-background" />
         <div className="absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
         <div className="absolute -bottom-28 left-16 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
       </div>
 
-      <div className="mx-auto grid min-h-screen max-w-6xl items-center gap-8 px-4 py-8 sm:px-6 sm:py-12 lg:grid-cols-2">
+      <div className="mx-auto grid min-h-d-screen max-w-6xl items-center gap-8 px-4 py-8 sm:px-6 sm:py-12 lg:grid-cols-2">
         <div className="hidden lg:block animate-in fade-in-0 slide-in-from-left-6 duration-500">
           <div className="max-w-lg">
             <div className="mb-8 flex items-center gap-3">
@@ -205,7 +205,10 @@ export const RegisterPage: React.FC = () => {
 
                 <p className="text-sm text-center mt-6 text-muted-foreground">
                   {t("alreadyHaveAccount")}{" "}
-                  <Link to="/login" className="text-primary hover:underline">
+                  <Link
+                    to="/login"
+                    className="text-primary hover:underline inline-block py-2 px-1 -mx-1 relative z-10"
+                  >
                     {t("login")}
                   </Link>
                 </p>

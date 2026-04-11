@@ -151,7 +151,7 @@ export const CalendarPage: React.FC = () => {
               classNames={{
                 root: "w-full",
                 months: "w-full",
-                month: "w-full",
+                month: "w-full items-center mx-auto",
                 day_button:
                   "relative data-[has-tasks=true]:after:content-[''] data-[has-tasks=true]:after:absolute data-[has-tasks=true]:after:bottom-1 data-[has-tasks=true]:after:left-1/2 data-[has-tasks=true]:after:-translate-x-1/2 data-[has-tasks=true]:after:h-1 data-[has-tasks=true]:after:w-1 data-[has-tasks=true]:after:rounded-full data-[has-tasks=true]:after:bg-primary",
               }}

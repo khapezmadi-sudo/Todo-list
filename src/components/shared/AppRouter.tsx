@@ -14,7 +14,7 @@ export const AppRouter: React.FC = () => {
 
   if (currentUser && isUserDocLoading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center">
+      <div className="flex h-d-screen w-full items-center justify-center">
         <Loading />
       </div>
     );
@@ -33,7 +33,7 @@ export const AppRouter: React.FC = () => {
     // Fallback — это то, что увидит пользователь во время загрузки чанка
     <Suspense
       fallback={
-        <div className="flex h-screen w-full items-center justify-center">
+        <div className="flex h-d-screen w-full items-center justify-center">
           <Loading />
         </div>
       }

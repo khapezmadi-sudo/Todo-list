@@ -102,7 +102,7 @@ export function CreateTaskDialog() {
         </SidebarMenuButton>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-xl p-0 overflow-hidden rounded-2xl shadow-xl max-h-[90svh] overflow-y-auto">
+      <DialogContent className="sm:max-w-xl p-0 overflow-hidden rounded-2xl shadow-xl max-h-[90svh] overflow-y-auto top-[5%] translate-y-0 sm:top-[50%] sm:translate-y-[-50%]">
         <CreateTaskForm
           register={register}
           handleSubmit={handleSubmit} // Передаем функцию обертку

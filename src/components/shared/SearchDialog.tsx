@@ -66,7 +66,7 @@ export const SearchDialog: React.FC = () => {
   const filteredTasks = useMemo(() => {
     if (!tasks) return [];
     const query = debouncedSearch.toLowerCase().trim();
-    if (!query) return tasks; // Если пусто — показываем все (или последние)
+    if (!query) return tasks.slice(0, 5); // Если пусто — показываем последние 5 задач
 
     return tasks.filter((task) => task.text.toLowerCase().includes(query));
   }, [tasks, debouncedSearch]);
@@ -101,23 +101,30 @@ export const SearchDialog: React.FC = () => {
               <Loading />
             </div>
           ) : filteredTasks.length > 0 ? (
-            filteredTasks.map((task) => (
-              <TaskItemById
-                key={task.id}
-                task={task}
-                // Закрываем поиск при клике на задачу
-                trigger={
-                  <div className="px-4 py-3 cursor-pointer transition-colors hover:bg-muted/60 border-b last:border-none">
-                    <p className="text-sm font-medium">{task.text}</p>
-                    {task.description && (
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-1 italic">
-                        {task.description}
-                      </p>
-                    )}
-                  </div>
-                }
-              />
-            ))
+            <>
+              {!debouncedSearch.trim() && (
+                <div className="px-4 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wide border-b bg-muted/20">
+                  Последние задачи
+                </div>
+              )}
+              {filteredTasks.map((task) => (
+                <TaskItemById
+                  key={task.id}
+                  task={task}
+                  // Закрываем поиск при клике на задачу
+                  trigger={
+                    <div className="px-4 py-3 cursor-pointer transition-colors hover:bg-muted/60 border-b last:border-none">
+                      <p className="text-sm font-medium">{task.text}</p>
+                      {task.description && (
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-1 italic">
+                          {task.description}
+                        </p>
+                      )}
+                    </div>
+                  }
+                />
+              ))}
+            </>
           ) : (
             <div className="flex flex-col items-center justify-center py-10 text-muted-foreground text-sm">
               {searchQuery ? t("searchNoResults") : t("searchStartTyping")}

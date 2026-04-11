@@ -12,6 +12,21 @@ export function ThemeProvider({
       defaultTheme="system"
       enableSystem
       disableTransitionOnChange
+      themes={[
+        "light",
+        "dark",
+        "system",
+        "ocean",
+        "sakura",
+        "coffee",
+        "lavender",
+        "sunset",
+        "nord",
+        "retro",
+        "cyberpunk",
+        "forest",
+        "monokai",
+      ]}
     >
       {children}
     </NextThemesProvider>
