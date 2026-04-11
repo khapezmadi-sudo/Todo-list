@@ -229,70 +229,76 @@ export const StatisticsDialog: React.FC = () => {
         </DropdownMenuItem>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-2xl max-h-[90svh] overflow-y-auto">
+      <DialogContent className="sm:max-w-2xl max-h-[90svh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle>{t("statistics")}</DialogTitle>
+          <DialogTitle className="text-lg sm:text-xl">
+            {t("statistics")}
+          </DialogTitle>
         </DialogHeader>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-lg border bg-background p-4">
-            <div className="text-sm text-muted-foreground">
+        <div className="mt-3 sm:mt-4 grid gap-2 sm:gap-3 grid-cols-2 sm:grid-cols-2">
+          <div className="rounded-lg border bg-background p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-muted-foreground">
               {t("statsOpen")}
             </div>
-            <div className="mt-1 text-2xl font-semibold">
+            <div className="mt-1 text-xl sm:text-2xl font-semibold">
               {openTasks.length}
             </div>
           </div>
 
-          <div className="rounded-lg border bg-background p-4">
-            <div className="text-sm text-muted-foreground">
+          <div className="rounded-lg border bg-background p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-muted-foreground">
               {t("statsCompletionRate")}
             </div>
-            <div className="mt-1 text-2xl font-semibold">{completionRate}%</div>
+            <div className="mt-1 text-xl sm:text-2xl font-semibold">
+              {completionRate}%
+            </div>
           </div>
 
-          <div className="rounded-lg border bg-background p-4">
-            <div className="text-sm text-muted-foreground">
+          <div className="rounded-lg border bg-background p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-muted-foreground">
               {t("statsOverdue")}
             </div>
-            <div className="mt-1 text-2xl font-semibold">
+            <div className="mt-1 text-xl sm:text-2xl font-semibold">
               {dueMetrics.overdue}
             </div>
           </div>
 
-          <div className="rounded-lg border bg-background p-4">
-            <div className="text-sm text-muted-foreground">
+          <div className="rounded-lg border bg-background p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-muted-foreground">
               {t("statsDueToday")}
             </div>
-            <div className="mt-1 text-2xl font-semibold">
+            <div className="mt-1 text-xl sm:text-2xl font-semibold">
               {dueMetrics.dueToday}
             </div>
           </div>
 
-          <div className="rounded-lg border bg-background p-4">
-            <div className="text-sm text-muted-foreground">
+          <div className="rounded-lg border bg-background p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-muted-foreground">
               {t("statsDueNext7Days")}
             </div>
-            <div className="mt-1 text-2xl font-semibold">
+            <div className="mt-1 text-xl sm:text-2xl font-semibold">
               {dueMetrics.dueNext7Days}
             </div>
           </div>
 
-          <div className="rounded-lg border bg-background p-4">
-            <div className="text-sm text-muted-foreground">
+          <div className="rounded-lg border bg-background p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-muted-foreground">
               {t("statsNoDueDate")}
             </div>
-            <div className="mt-1 text-2xl font-semibold">
+            <div className="mt-1 text-xl sm:text-2xl font-semibold">
               {dueMetrics.noDueDate}
             </div>
           </div>
         </div>
 
-        <div className="mt-6">
-          <div className="mb-2 text-sm font-medium">{t("statsLast7Days")}</div>
+        <div className="mt-4 sm:mt-6">
+          <div className="mb-2 text-xs sm:text-sm font-medium">
+            {t("statsLast7Days")}
+          </div>
           <ChartContainer
             config={chartConfig}
-            className="min-h-52 sm:min-h-62.5 w-full"
+            className="min-h-44 sm:min-h-52 w-full"
           >
             <BarChart accessibilityLayer data={chartData}>
               <CartesianGrid vertical={false} />
@@ -302,10 +308,14 @@ export const StatisticsDialog: React.FC = () => {
                 tickLine={false}
                 tickMargin={10}
                 axisLine={false}
+                tick={{ fontSize: 10 }}
               />
 
               <ChartTooltip content={<ChartTooltipContent />} />
-              <ChartLegend content={<ChartLegendContent />} />
+              <ChartLegend
+                content={<ChartLegendContent />}
+                className="hidden sm:block"
+              />
 
               <Bar dataKey="created" fill="var(--color-created)" radius={4} />
 

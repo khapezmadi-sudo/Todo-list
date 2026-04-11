@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-
+import { motion } from "framer-motion";
 import { SquarePlus } from "lucide-react";
 import { SidebarMenuButton } from "../../../ui/sidebar";
 import { useForm } from "react-hook-form";
@@ -94,12 +94,19 @@ export function CreateTaskDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <SidebarMenuButton className="cursor-pointer text-sidebar-primary dark:text-sidebar-primary hover:text-sidebar-primary dark:hover:text-sidebar-primary">
-          <SquarePlus className="font-semibold text-sidebar-primary dark:text-sidebar-primary" />
-          <span className="text-sidebar-primary dark:text-sidebar-primary font-semibold">
-            {t("createTask")}
-          </span>
-        </SidebarMenuButton>
+        <motion.div
+          whileTap={{ scale: 0.98 }}
+          initial={{ opacity: 0, x: -15 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
+          <SidebarMenuButton className="cursor-pointer text-sidebar-primary dark:text-sidebar-primary hover:text-sidebar-primary dark:hover:text-sidebar-primary w-full">
+            <SquarePlus className="font-semibold text-sidebar-primary dark:text-sidebar-primary" />
+            <span className="text-sidebar-primary dark:text-sidebar-primary font-semibold">
+              {t("createTask")}
+            </span>
+          </SidebarMenuButton>
+        </motion.div>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-xl p-0 overflow-hidden rounded-2xl shadow-xl max-h-[90svh] overflow-y-auto top-[5%] translate-y-0 sm:top-[50%] sm:translate-y-[-50%]">

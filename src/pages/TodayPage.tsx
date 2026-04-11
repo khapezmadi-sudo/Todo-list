@@ -1,5 +1,6 @@
 import TaskItem from "@/components/shared/Task/TaskItem/TaskItem";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { auth, db } from "@/firebase";
 import {
@@ -135,11 +136,21 @@ export const TodayPage = () => {
 
   const visibleTodayTasks = [...undatedTasks, ...todayTasks];
   return (
-    <div className="min-h-[calc(100svh-64px)] md:h-[calc(100vh-120px)] flex justify-center">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
+      className="min-h-[calc(100svh-64px)] md:h-[calc(100vh-120px)] flex justify-center"
+    >
       <ScrollArea className="w-full max-w-2xl px-3 sm:px-4">
-        <h1 className="sticky top-0 z-50 bg-background py-2 text-2xl font-bold mb-4 text-left hidden md:block">
+        <motion.h1
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2 }}
+          className="sticky top-0 z-50 bg-background py-2 text-2xl font-bold mb-4 text-left hidden md:block"
+        >
           {t("todayTasks")}
-        </h1>
+        </motion.h1>
 
         {overdueTasks.length > 0 && (
           <div className="pb-6">
@@ -174,6 +185,6 @@ export const TodayPage = () => {
           </div>
         )}
       </ScrollArea>
-    </div>
+    </motion.div>
   );
 };

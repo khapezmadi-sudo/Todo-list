@@ -29,6 +29,8 @@ import {
   Zap,
   Trees,
   Braces,
+  FileText,
+  BookOpen,
 } from "lucide-react";
 import { ProfileDialog } from "./ProfileDialog";
 import { SettingsDialog } from "./SettingsDialog";
@@ -51,6 +53,8 @@ export const SidebarHeaderLayout: React.FC = () => {
     if (theme === "cyberpunk") return Zap;
     if (theme === "forest") return Trees;
     if (theme === "monokai") return Braces;
+    if (theme === "paper") return FileText;
+    if (theme === "notebook") return BookOpen;
     if (resolvedTheme === "dark") return Moon;
     return Sun;
   };
@@ -67,6 +71,8 @@ export const SidebarHeaderLayout: React.FC = () => {
     if (theme === "cyberpunk") return "Cyberpunk";
     if (theme === "forest") return "Forest";
     if (theme === "monokai") return "Monokai";
+    if (theme === "paper") return "Paper";
+    if (theme === "notebook") return "Notebook";
     if (theme === "system") return t("themeSystem");
     if (theme === "dark") return t("themeDark");
     return t("themeLight");
@@ -154,6 +160,14 @@ export const SidebarHeaderLayout: React.FC = () => {
                     <DropdownMenuRadioItem value="monokai">
                       <Braces className="h-4 w-4" />
                       Monokai
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="paper">
+                      <FileText className="h-4 w-4" />
+                      Paper
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="notebook">
+                      <BookOpen className="h-4 w-4" />
+                      Notebook
                     </DropdownMenuRadioItem>
                   </DropdownMenuRadioGroup>
                 </DropdownMenuSubContent>

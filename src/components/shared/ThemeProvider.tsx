@@ -26,6 +26,8 @@ export function ThemeProvider({
         "cyberpunk",
         "forest",
         "monokai",
+        "paper",
+        "notebook",
       ]}
     >
       {children}

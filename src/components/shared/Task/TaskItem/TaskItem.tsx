@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import type { Task } from "@/types/task";
 import { Edit2, Trash2 } from "lucide-react";
 import React, { useCallback, useState } from "react";
+import { motion } from "framer-motion";
 import TaskItemEdit from "./TaskItemEdit";
 import { toast } from "sonner";
 import ActionsDropdown from "./ActionsDropdown";
@@ -109,9 +110,14 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
   if (isEditing)
     return <TaskItemEdit task={task} setIsEditing={setIsEditing} />;
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, x: -30 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ duration: 0.3 }}
       className={cn(
-        "group flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-lg border bg-card p-3 transition hover:bg-muted/40 relative border-l-4",
+        "group flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-lg border bg-card p-3 relative border-l-4 cursor-pointer",
         task.priority === 3 && "border-l-red-500",
         task.priority === 2 && "border-l-amber-500",
         task.priority === 1 && "border-l-border",
@@ -119,11 +125,13 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
     >
       <div className="flex min-w-0 items-start sm:items-center gap-3 overflow-hidden">
         {/* Чекбокс с интегрированным лоадером */}
-        <TaskItemToggleCheckbox
-          isToggling={isToggling}
-          task={task}
-          toggleTaskStatus={toggleTaskStatus}
-        />
+        <motion.div whileTap={{ scale: 0.9 }}>
+          <TaskItemToggleCheckbox
+            isToggling={isToggling}
+            task={task}
+            toggleTaskStatus={toggleTaskStatus}
+          />
+        </motion.div>
 
         {/* Текст задачи */}
         <TaskItemById
@@ -162,13 +170,15 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
             : "opacity-100 md:opacity-0 md:group-hover:opacity-100",
         )}
       >
-        <button
+        <motion.button
+          whileHover={{ scale: 1.1, rotate: 5 }}
+          whileTap={{ scale: 0.9 }}
           onClick={() => setIsEditing((prev) => !prev)}
           className="rounded-md p-2 text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
           title="Редактировать"
         >
           <Edit2 className="w-4 h-4" />
-        </button>
+        </motion.button>
 
         <ConfirmDialog
           title="Удаление задачи"
@@ -178,18 +188,20 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
           variant="destructive"
           onConfirm={handleDelete}
           trigger={
-            <button
+            <motion.button
+              whileHover={{ scale: 1.1, rotate: -5 }}
+              whileTap={{ scale: 0.9 }}
               className="rounded-md p-2 text-muted-foreground transition hover:bg-accent hover:text-destructive"
               title="Удалить"
             >
               <Trash2 className="w-4 h-4" />
-            </button>
+            </motion.button>
           }
         />
 
         <ActionsDropdown onOpenChange={setIsMenuOpen} task={task} />
       </div>
-    </div>
+    </motion.div>
   );
 };
 

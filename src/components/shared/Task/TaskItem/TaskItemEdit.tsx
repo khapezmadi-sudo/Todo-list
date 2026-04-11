@@ -145,7 +145,7 @@ const TaskItemEdit: React.FC<TaskItemEditProps> = ({ task, setIsEditing }) => {
                   <CalendarPicker
                     mode="single"
                     selected={dueDate ?? undefined}
-                    onSelect={(date) =>
+                    onSelect={(date: Date | undefined) =>
                       setValue("dueDate", date ?? null, {
                         shouldDirty: true,
                         shouldTouch: true,
@@ -199,7 +199,7 @@ const TaskItemEdit: React.FC<TaskItemEditProps> = ({ task, setIsEditing }) => {
                   <CalendarPicker
                     mode="single"
                     selected={reminderAt ?? undefined}
-                    onSelect={(date) => {
+                    onSelect={(date: Date | undefined) => {
                       if (!date) {
                         setValue("reminderAt", null, {
                           shouldDirty: true,

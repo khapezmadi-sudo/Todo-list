@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 import type {
   Control,
   UseFormHandleSubmit,
@@ -112,7 +113,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
                 <CalendarPicker
                   mode="single"
                   selected={dueDate ?? undefined}
-                  onSelect={(date) => {
+                  onSelect={(date: Date | undefined) => {
                     setValue("dueDate", date ?? null, {
                       shouldDirty: true,
                       shouldTouch: true,
@@ -163,7 +164,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
                 <CalendarPicker
                   mode="single"
                   selected={reminderAt ?? undefined}
-                  onSelect={(date) => {
+                  onSelect={(date: Date | undefined) => {
                     if (!date) {
                       setValue("reminderAt", null, {
                         shouldDirty: true,
@@ -253,22 +254,37 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
 
         <div className="flex flex-col sm:flex-row gap-2">
           <DialogClose asChild>
-            <Button variant="secondary" type="button" className="h-9 px-4">
-              {t("cancel")}
-            </Button>
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex-1 sm:flex-initial"
+            >
+              <Button
+                variant="secondary"
+                type="button"
+                className="h-9 px-4 w-full"
+              >
+                {t("cancel")}
+              </Button>
+            </motion.div>
           </DialogClose>
 
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="h-9 px-5 font-medium bg-primary hover:bg-primary/90 text-primary-foreground"
+          <motion.div
+            whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
+            className="flex-1 sm:flex-initial"
           >
-            {isSubmitting ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              t("createTask")
-            )}
-          </Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="h-9 px-5 font-medium bg-primary hover:bg-primary/90 text-primary-foreground w-full"
+            >
+              {isSubmitting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                t("createTask")
+              )}
+            </Button>
+          </motion.div>
         </div>
       </div>
     </form>
