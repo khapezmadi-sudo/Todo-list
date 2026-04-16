@@ -16,12 +16,12 @@ import {
   Clock,
   ListChecks,
   Shield,
+  SquarePlus,
+  Search,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { CreateTaskDialog } from "./Task/CreateTask/CreateTaskDialog";
 import { useLocation, useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
-import { SearchDialog } from "./SearchDialog";
 import { ToggleLanguageSelect } from "./ToggleLanguageSelect";
 import { useTranslation } from "react-i18next";
 import { useIsAdmin } from "@/hooks/use-is-admin";
@@ -33,6 +33,18 @@ export function AppSidebar() {
   const { isAdmin } = useIsAdmin();
   const { isMobile, setOpenMobile } = useSidebar();
 
+  // Get base path without dialog suffix
+  const getBasePath = (path: string) => {
+    return (
+      path.replace(
+        /\/(settings|profile|stats|statistics|create|search)$/,
+        "",
+      ) || "/"
+    );
+  };
+
+  const currentBasePath = getBasePath(location.pathname);
+
   const navigateAndClose = (to: string) => {
     navigate(to);
     if (isMobile) setOpenMobile(false);
@@ -43,12 +55,46 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
-            <SidebarMenuItem>
-              <SearchDialog />
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <CreateTaskDialog />
-            </SidebarMenuItem>
+            <motion.div
+              initial={{ opacity: 0, x: -15 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.15 }}
+            >
+              <SidebarMenuItem
+                onClick={() =>
+                  navigateAndClose(
+                    `${currentBasePath === "/" ? "" : currentBasePath}/search`,
+                  )
+                }
+              >
+                <SidebarMenuButton className="cursor-pointer w-full">
+                  <Search className="text-sidebar-primary dark:text-sidebar-primary" />
+                  <span className="text-sidebar-primary dark:text-sidebar-primary">
+                    {t("search")}
+                  </span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: -15 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+            >
+              <SidebarMenuItem
+                onClick={() =>
+                  navigateAndClose(
+                    `${currentBasePath === "/" ? "" : currentBasePath}/create`,
+                  )
+                }
+              >
+                <SidebarMenuButton className="cursor-pointer text-sidebar-primary dark:text-sidebar-primary hover:text-sidebar-primary dark:hover:text-sidebar-primary w-full">
+                  <SquarePlus className="font-semibold text-sidebar-primary dark:text-sidebar-primary" />
+                  <span className="text-sidebar-primary dark:text-sidebar-primary font-semibold">
+                    {t("createTask")}
+                  </span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </motion.div>
 
             <motion.div
               initial={{ opacity: 0, x: -15 }}

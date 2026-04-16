@@ -5,8 +5,10 @@ import { auth } from "@/firebase";
 import { reload, sendEmailVerification, signOut } from "firebase/auth";
 import { toast } from "sonner";
 import { Link } from "react-router";
+import { useTranslation } from "react-i18next";
 
 export const VerifyEmailPage: React.FC = () => {
+  const { t } = useTranslation();
   const [isSending, setIsSending] = React.useState(false);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
 
@@ -22,9 +24,9 @@ export const VerifyEmailPage: React.FC = () => {
       setIsSending(true);
       const p = sendEmailVerification(user);
       toast.promise(p, {
-        loading: "Отправляем письмо...",
-        success: "Письмо отправлено",
-        error: "Не удалось отправить письмо",
+        loading: t("toastSendingEmail"),
+        success: t("toastEmailSent"),
+        error: t("toastEmailFailed"),
       });
       await p;
     } finally {
@@ -40,9 +42,9 @@ export const VerifyEmailPage: React.FC = () => {
       setIsRefreshing(true);
       await reload(user);
       if (auth.currentUser?.emailVerified) {
-        toast.success("Email подтверждён");
+        toast.success(t("toastEmailVerified"));
       } else {
-        toast.message("Пока не подтверждено. Проверь почту и нажми ещё раз.");
+        toast.message(t("toastEmailNotVerified"));
       }
     } finally {
       setIsRefreshing(false);

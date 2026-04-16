@@ -90,9 +90,9 @@ const TaskItemEdit: React.FC<TaskItemEditProps> = ({ task, setIsEditing }) => {
     });
 
     toast.promise(myPromise, {
-      loading: "Обновление...",
-      success: "Задача обновлена!",
-      error: "Ошибка при сохранении",
+      loading: t("toastUpdating"),
+      success: t("toastTaskUpdated"),
+      error: t("toastUpdateFailed"),
     });
 
     try {

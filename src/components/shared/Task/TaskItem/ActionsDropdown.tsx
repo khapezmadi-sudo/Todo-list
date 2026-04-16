@@ -11,6 +11,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import type { Task } from "@/types/task";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 interface ActionsDropdownProps {
   onOpenChange?: (open: boolean) => void; // Добавляем проп
   task: Task;
@@ -19,6 +20,7 @@ const ActionsDropdown: React.FC<ActionsDropdownProps> = ({
   onOpenChange,
   task,
 }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState<boolean>(false);
   const handleOpenChange = (val: boolean) => {
     setOpen(val);
@@ -33,11 +35,11 @@ const ActionsDropdown: React.FC<ActionsDropdownProps> = ({
     });
 
     toast.promise(myPromise, {
-      loading: "Обновление статуса...",
+      loading: t("toastUpdatingStatus"),
       success: newStatus
-        ? "Задача помечено как важное"
-        : "Задача убрано из важных",
-      error: "Не удалось обновить статус",
+        ? t("toastMarkedImportant")
+        : t("toastRemovedFromImportant"),
+      error: t("toastUpdateFailed"),
     });
     try {
       await myPromise;

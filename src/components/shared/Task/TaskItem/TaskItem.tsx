@@ -1,14 +1,26 @@
 import { cn } from "@/lib/utils";
 import type { Task } from "@/types/task";
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2, Trash2, Flag } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { motion } from "framer-motion";
+import { useNavigate, useLocation } from "react-router";
 import TaskItemEdit from "./TaskItemEdit";
 import { toast } from "sonner";
 import ActionsDropdown from "./ActionsDropdown";
-import TaskItemById from "./TaskItemById";
 import ConfirmDialog from "../../ConfirmDialog";
 import TaskItemToggleCheckbox from "./TaskItemToggleCheckbox";
+import { useTranslation } from "react-i18next";
+
+// Priority config
+const priorityConfig: Record<
+  number,
+  { color: string; label: string; bg: string }
+> = {
+  0: { color: "", label: "", bg: "" },
+  1: { color: "text-muted-foreground", label: "Low", bg: "bg-muted/50" },
+  2: { color: "text-amber-600", label: "Medium", bg: "bg-amber-500/10" },
+  3: { color: "text-destructive", label: "High", bg: "bg-red-500/10" },
+};
 
 interface TaskItemProps {
   task: Task;
@@ -17,10 +29,18 @@ interface TaskItemProps {
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isToggling, setIsToggling] = useState<boolean>(false); // Загрузка только для чекбокса
+
+  const handleTaskClick = useCallback(() => {
+    const currentPath = location.pathname;
+    navigate(`/task/${task.id}?from=${encodeURIComponent(currentPath)}`);
+  }, [navigate, location.pathname, task.id]);
 
   const dueDateChip = React.useMemo(() => {
     if (task.completed) return null;
@@ -59,7 +79,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
     return (
       <span
         className={cn(
-          "mt-1 w-fit inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold",
+          "mt-1 w-fit inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] sm:text-[10px] font-semibold",
           className,
         )}
       >
@@ -75,11 +95,9 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
     const myPromise = onToggle(task);
 
     toast.promise(myPromise, {
-      loading: "Обновление статуса...",
-      success: newStatus
-        ? "Задача выполнена! 🎉"
-        : "Задача возвращена в работу",
-      error: "Не удалось изменить статус",
+      loading: t("toastUpdatingStatus"),
+      success: newStatus ? t("toastTaskCompleted") : t("toastTaskReopened"),
+      error: t("toastUpdateFailed"),
     });
 
     try {
@@ -94,9 +112,9 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
     const myPromise = onDelete(task);
 
     toast.promise(myPromise, {
-      loading: "Удаление...",
-      success: `Задача "${task.text}" удалена!`,
-      error: `Не удалось удалить задачу!`,
+      loading: t("toastDeleting"),
+      success: t("toastTaskDeleted", { text: task.text }),
+      error: t("toastDeleteFailed"),
     });
 
     try {
@@ -133,38 +151,61 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
           />
         </motion.div>
 
-        {/* Текст задачи */}
-        <TaskItemById
-          task={task}
-          trigger={
-            <div
-              className="flex min-w-0 flex-col cursor-pointer"
-              title="Нажмите чтобы открыть задачу"
+        {/* Текст задачи - улучшенная мобильная адаптация */}
+        <div
+          onClick={handleTaskClick}
+          className="flex min-w-0 flex-col cursor-pointer py-1"
+          title={t("createTask")}
+        >
+          {/* Заголовок с приоритетом */}
+          <div className="flex items-center gap-2">
+            <h5
+              className={cn(
+                "text-base sm:text-[16px] leading-snug sm:leading-tight line-clamp-2 sm:truncate font-medium text-foreground",
+                task.completed && "text-muted-foreground line-through",
+                task.priority === 3 && !task.completed && "font-semibold",
+              )}
             >
-              <h5
+              {task.text}
+            </h5>
+            {/* Приоритет chip */}
+            {task.priority > 0 && (
+              <span
                 className={cn(
-                  "text-[16px] leading-tight truncate font-medium text-foreground",
-                  task.completed && "text-muted-foreground line-through",
+                  "shrink-0 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium",
+                  priorityConfig[task.priority as keyof typeof priorityConfig]
+                    .bg,
+                  priorityConfig[task.priority as keyof typeof priorityConfig]
+                    .color,
                 )}
               >
-                {task.text}
-              </h5>
-              {task.description && (
-                <p className="mt-0.5 truncate text-[12px] text-muted-foreground">
-                  {task.description}
-                </p>
-              )}
-              {dueDateChip}
-            </div>
-          }
-        />
+                <Flag className="w-3 h-3" />
+              </span>
+            )}
+          </div>
+          {task.description && (
+            <p className="mt-0.5 line-clamp-1 sm:truncate text-xs sm:text-[12px] text-muted-foreground">
+              {task.description}
+            </p>
+          )}
+          {/* Chips row */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {dueDateChip}
+            {task.isImportant && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-300">
+                ⭐ {t("important")}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Кнопки действий */}
+      {/* Кнопки действий - улучшенная мобильная адаптация */}
       <div
         className={cn(
-          "flex items-center justify-end gap-1 transition-opacity",
-          // Если меню открыто, оставляем видимым (opacity-100), иначе — по ховеру
+          "flex items-center justify-end gap-1 sm:gap-2 transition-opacity",
+          // На мобильном всегда видимы для удобства, на десктопе по ховеру
           isMenuOpen
             ? "opacity-100"
             : "opacity-100 md:opacity-0 md:group-hover:opacity-100",
@@ -172,29 +213,29 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
       >
         <motion.button
           whileHover={{ scale: 1.1, rotate: 5 }}
-          whileTap={{ scale: 0.9 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => setIsEditing((prev) => !prev)}
-          className="rounded-md p-2 text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
-          title="Редактировать"
+          className="rounded-md p-2.5 sm:p-2 text-muted-foreground transition hover:bg-accent hover:text-accent-foreground min-w-10 min-h-10 sm:min-w-0 sm:min-h-0 flex items-center justify-center"
+          title={t("update")}
         >
-          <Edit2 className="w-4 h-4" />
+          <Edit2 className="w-5 h-5 sm:w-4 sm:h-4" />
         </motion.button>
 
         <ConfirmDialog
-          title="Удаление задачи"
+          title={t("delete")}
           isLoading={isDeleting}
-          description={`Вы уверены, что хотите удалить "${task.text}"?`}
-          actionText="Удалить"
+          description={`${t("settingsDeleteAccountDescription")} "${task.text}"?`}
+          actionText={t("delete")}
           variant="destructive"
           onConfirm={handleDelete}
           trigger={
             <motion.button
               whileHover={{ scale: 1.1, rotate: -5 }}
-              whileTap={{ scale: 0.9 }}
-              className="rounded-md p-2 text-muted-foreground transition hover:bg-accent hover:text-destructive"
-              title="Удалить"
+              whileTap={{ scale: 0.95 }}
+              className="rounded-md p-2.5 sm:p-2 text-muted-foreground transition hover:bg-accent hover:text-destructive min-w-10 min-h-10 sm:min-w-0 sm:min-h-0 flex items-center justify-center"
+              title={t("delete")}
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-5 h-5 sm:w-4 sm:h-4" />
             </motion.button>
           }
         />

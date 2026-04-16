@@ -37,10 +37,28 @@ export const taskSchema = z.object({
 
 export type TaskSchemaData = z.infer<typeof taskSchema>;
 
-export function CreateTaskDialog() {
+interface CreateTaskDialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function CreateTaskDialog({
+  open: controlledOpen,
+  onOpenChange,
+}: CreateTaskDialogProps = {}) {
   const [priority, setPriority] = useState<number>(0);
-  const [open, setOpen] = useState<boolean>(false);
+  const [internalOpen, setInternalOpen] = useState<boolean>(false);
   const { t } = useTranslation();
+
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = (value: boolean) => {
+    if (isControlled) {
+      onOpenChange?.(value);
+    } else {
+      setInternalOpen(value);
+    }
+  };
 
   const {
     register,
@@ -63,6 +81,9 @@ export function CreateTaskDialog() {
     if (!auth.currentUser) return;
     if (priority === 0) setPriority(1);
 
+    // If no due date selected, default to today
+    const dueDate = data.dueDate ?? new Date();
+
     const newTaskData: CreateTask = {
       text: data.text,
       description: data.description || "",
@@ -70,16 +91,16 @@ export function CreateTaskDialog() {
       userId: auth.currentUser.uid,
       isImportant: false,
       createdAt: serverTimestamp(),
-      dueDate: data.dueDate ? Timestamp.fromDate(data.dueDate) : null,
+      dueDate: Timestamp.fromDate(dueDate),
       reminderAt: data.reminderAt ? Timestamp.fromDate(data.reminderAt) : null,
       priority: priority,
     };
     const myPromise = createTask(newTaskData);
 
     toast.promise(myPromise, {
-      loading: "Создание...",
-      success: "Задача создана!",
-      error: "Ошибка при создании!",
+      loading: t("toastCreating"),
+      success: t("toastTaskCreated"),
+      error: t("toastCreateFailed"),
     });
 
     try {
@@ -93,21 +114,23 @@ export function CreateTaskDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <motion.div
-          whileTap={{ scale: 0.98 }}
-          initial={{ opacity: 0, x: -15 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
-        >
-          <SidebarMenuButton className="cursor-pointer text-sidebar-primary dark:text-sidebar-primary hover:text-sidebar-primary dark:hover:text-sidebar-primary w-full">
-            <SquarePlus className="font-semibold text-sidebar-primary dark:text-sidebar-primary" />
-            <span className="text-sidebar-primary dark:text-sidebar-primary font-semibold">
-              {t("createTask")}
-            </span>
-          </SidebarMenuButton>
-        </motion.div>
-      </DialogTrigger>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          <motion.div
+            whileTap={{ scale: 0.98 }}
+            initial={{ opacity: 0, x: -15 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+          >
+            <SidebarMenuButton className="cursor-pointer text-sidebar-primary dark:text-sidebar-primary hover:text-sidebar-primary dark:hover:text-sidebar-primary w-full">
+              <SquarePlus className="font-semibold text-sidebar-primary dark:text-sidebar-primary" />
+              <span className="text-sidebar-primary dark:text-sidebar-primary font-semibold">
+                {t("createTask")}
+              </span>
+            </SidebarMenuButton>
+          </motion.div>
+        </DialogTrigger>
+      )}
 
       <DialogContent className="sm:max-w-xl p-0 overflow-hidden rounded-2xl shadow-xl max-h-[90svh] overflow-y-auto top-[5%] translate-y-0 sm:top-[50%] sm:translate-y-[-50%]">
         <CreateTaskForm

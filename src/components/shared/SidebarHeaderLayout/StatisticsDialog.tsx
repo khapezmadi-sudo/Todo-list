@@ -37,11 +37,40 @@ const last7DaysStart = (() => {
   return d;
 })();
 
-export const StatisticsDialog: React.FC = () => {
+interface StatisticsDialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export const StatisticsDialog: React.FC<StatisticsDialogProps> = ({
+  open: controlledOpen,
+  onOpenChange,
+}) => {
   const [createdLast7Days, setCreatedLast7Days] = useState<Task[]>([]);
   const [openTasks, setOpenTasks] = useState<Task[]>([]);
   const [completedTasks, setCompletedTasks] = useState<Task[]>([]);
+  const [internalOpen, setInternalOpen] = useState(false);
   const { t, i18n } = useTranslation();
+
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = (value: boolean) => {
+    if (isControlled) {
+      onOpenChange?.(value);
+    } else {
+      setInternalOpen(value);
+    }
+  };
+
+  // Listen for openStatistics event from CommandPalette (only when not controlled)
+  useEffect(() => {
+    if (isControlled) return;
+
+    const handleOpenStatistics = () => setInternalOpen(true);
+    window.addEventListener("openStatistics", handleOpenStatistics);
+    return () =>
+      window.removeEventListener("openStatistics", handleOpenStatistics);
+  }, [isControlled]);
 
   const chartConfig = useMemo(() => {
     return {
@@ -221,13 +250,15 @@ export const StatisticsDialog: React.FC = () => {
   }, [createdLast7Days, i18n.language]);
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-          <ChartNoAxesColumnIncreasing className=" h-4 w-4" />
-          {t("statistics")}
-        </DropdownMenuItem>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+            <ChartNoAxesColumnIncreasing className=" h-4 w-4" />
+            {t("statistics")}
+          </DropdownMenuItem>
+        </DialogTrigger>
+      )}
 
       <DialogContent className="sm:max-w-2xl max-h-[90svh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>

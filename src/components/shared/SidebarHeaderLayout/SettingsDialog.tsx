@@ -1,10 +1,9 @@
 import React from "react";
 import { DropdownMenuItem } from "../../ui/dropdown-menu";
-import { SettingsIcon } from "lucide-react";
+import { SettingsIcon, User, Palette, Bell } from "lucide-react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -25,13 +24,72 @@ import {
 } from "firebase/auth";
 import { toast } from "sonner";
 import ConfirmDialog from "../ConfirmDialog";
+import { ThemeSelector } from "../ThemeSelector";
+import { cn } from "@/lib/utils";
 
-export const SettingsDialog: React.FC = () => {
+type TabType = "account" | "theme" | "notifications";
+
+const tabs: { id: TabType; label: string; icon: React.ElementType }[] = [
+  { id: "account", label: "account", icon: User },
+  { id: "theme", label: "theme", icon: Palette },
+  { id: "notifications", label: "notifications", icon: Bell },
+];
+
+interface SettingsDialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  defaultTab?: TabType;
+}
+
+export const SettingsDialog: React.FC<SettingsDialogProps> = ({
+  open: controlledOpen,
+  onOpenChange,
+  defaultTab,
+}) => {
   const { t } = useTranslation();
   const currentUser = useCurrentUser((state) => state.currentUser);
   const setCurrentUser = useCurrentUser((state) => state.setCurrentUser);
   const notificationSettings = useNotificationSettings();
-  const [open, setOpen] = React.useState(false);
+  const [internalOpen, setInternalOpen] = React.useState(false);
+  const [activeTab, setActiveTab] = React.useState<TabType>(
+    defaultTab || "account",
+  );
+
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = (value: boolean) => {
+    if (isControlled) {
+      onOpenChange?.(value);
+    } else {
+      setInternalOpen(value);
+    }
+  };
+
+  // Listen for openSettings event from CommandPalette (only when not controlled)
+  React.useEffect(() => {
+    if (isControlled) return;
+
+    const handleOpenSettings = (e: CustomEvent) => {
+      setInternalOpen(true);
+      if (e.detail === "theme") {
+        setActiveTab("theme");
+      } else if (e.detail === "account") {
+        setActiveTab("account");
+      } else if (e.detail === "notifications") {
+        setActiveTab("notifications");
+      }
+    };
+    window.addEventListener(
+      "openSettings",
+      handleOpenSettings as EventListener,
+    );
+    return () =>
+      window.removeEventListener(
+        "openSettings",
+        handleOpenSettings as EventListener,
+      );
+  }, [isControlled]);
+
   const [displayName, setDisplayName] = React.useState<string>(
     currentUser?.displayName ?? "",
   );
@@ -150,231 +208,289 @@ export const SettingsDialog: React.FC = () => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-          <SettingsIcon />
-          {t("settings")}
-        </DropdownMenuItem>
-      </DialogTrigger>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+            <SettingsIcon />
+            {t("settings")}
+          </DropdownMenuItem>
+        </DialogTrigger>
+      )}
 
-      <DialogContent className="sm:max-w-xl max-h-[90svh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-3xl max-h-[85svh] overflow-hidden p-0">
+        <DialogHeader className="px-6 pt-6 pb-2">
           <DialogTitle>{t("settings")}</DialogTitle>
-          <DialogDescription>{t("settingsDescription")}</DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-6 px-0">
-          <div className="grid gap-3">
-            <div className="text-sm font-semibold">{t("settingsProfile")}</div>
-            <div className="grid gap-2">
-              <Label htmlFor="settings-display-name">{t("settingsName")}</Label>
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <Input
-                  id="settings-display-name"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder={t("settingsNamePlaceholder")}
-                  className="h-10"
-                />
-                <Button
-                  type="button"
-                  onClick={handleSaveName}
-                  disabled={!canSaveName || isSavingName}
-                  className="h-10"
+        <div className="flex flex-col sm:flex-row h-[calc(85svh-80px)]">
+          {/* Sidebar Tabs */}
+          <div className="flex sm:flex-col border-b sm:border-b-0 sm:border-r border-border bg-muted/30 sm:w-48 shrink-0 overflow-x-auto sm:overflow-x-visible">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap",
+                    "hover:bg-accent/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    isActive
+                      ? "bg-accent text-accent-foreground sm:border-r-2 sm:border-r-primary"
+                      : "text-muted-foreground",
+                  )}
                 >
-                  {t("save")}
-                </Button>
-              </div>
+                  <Icon className="w-4 h-4 shrink-0" />
+                  {/* @ts-expect-error i18n key */}
+                  <span className="capitalize">{t(tab.label)}</span>
+                </button>
+              );
+            })}
+          </div>
 
-              <Label htmlFor="settings-photo-url" className="mt-2">
-                {t("settingsPhotoUrl")}
-              </Label>
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 overflow-hidden rounded-full border bg-muted">
-                    {photoURL.trim() ? (
-                      <img
-                        src={photoURL.trim()}
-                        alt={t("settingsAvatarPreviewAlt")}
-                        className="h-full w-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = "";
-                        }}
+          {/* Content Area */}
+          <div className="flex-1 overflow-y-auto p-6">
+            {activeTab === "account" && (
+              <div className="space-y-6">
+                {/* Account Content */}
+                <div className="grid gap-3">
+                  <div className="text-sm font-semibold">
+                    {t("settingsProfile")}
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="settings-display-name">
+                      {t("settingsName")}
+                    </Label>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                      <Input
+                        id="settings-display-name"
+                        value={displayName}
+                        onChange={(e) => setDisplayName(e.target.value)}
+                        placeholder={t("settingsNamePlaceholder")}
+                        className="h-10"
                       />
-                    ) : null}
+                      <Button
+                        type="button"
+                        onClick={handleSaveName}
+                        disabled={!canSaveName || isSavingName}
+                        className="h-10"
+                      >
+                        {t("save")}
+                      </Button>
+                    </div>
+
+                    <Label htmlFor="settings-photo-url" className="mt-2">
+                      {t("settingsPhotoUrl")}
+                    </Label>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 overflow-hidden rounded-full border bg-muted">
+                          {photoURL.trim() ? (
+                            <img
+                              src={photoURL.trim()}
+                              alt={t("settingsAvatarPreviewAlt")}
+                              className="h-full w-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.src = "";
+                              }}
+                            />
+                          ) : null}
+                        </div>
+                      </div>
+                      <Input
+                        id="settings-photo-url"
+                        value={photoURL}
+                        onChange={(e) => setPhotoURL(e.target.value)}
+                        placeholder="https://..."
+                        className="h-10"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleSavePhoto}
+                        disabled={!canSavePhoto || isSavingName}
+                        className="h-10"
+                      >
+                        {t("update")}
+                      </Button>
+                    </div>
+
+                    <div className="text-xs text-muted-foreground">
+                      {t("email")}: {currentUser?.email ?? "—"}
+                    </div>
                   </div>
                 </div>
-                <Input
-                  id="settings-photo-url"
-                  value={photoURL}
-                  onChange={(e) => setPhotoURL(e.target.value)}
-                  placeholder="https://..."
-                  className="h-10"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleSavePhoto}
-                  disabled={!canSavePhoto || isSavingName}
-                  className="h-10"
-                >
-                  {t("update")}
-                </Button>
-              </div>
 
-              <div className="text-xs text-muted-foreground">
-                {t("email")}: {currentUser?.email ?? "—"}
-              </div>
-            </div>
-          </div>
+                <Separator />
 
-          <Separator />
+                <div className="grid gap-3">
+                  <div className="text-sm font-semibold">
+                    {t("settingsSecurity")}
+                  </div>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="text-sm text-muted-foreground">
+                      {t("settingsResetPasswordDescription")}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handlePasswordReset}
+                      disabled={!currentUser?.email || isSendingReset}
+                    >
+                      {t("settingsSendResetEmail")}
+                    </Button>
+                  </div>
+                </div>
 
-          <div className="grid gap-3">
-            <div className="text-sm font-semibold">
-              {t("settingsNotifications")}
-            </div>
+                <Separator />
 
-            <div className="flex items-center justify-between gap-3">
-              <div className="text-sm text-muted-foreground">
-                {t("settingsSound")}
-              </div>
-              <Switch
-                checked={notificationSettings.soundEnabled}
-                onCheckedChange={notificationSettings.setSoundEnabled}
-              />
-            </div>
+                <div className="grid gap-3">
+                  <div className="text-sm font-semibold text-destructive">
+                    {t("settingsDangerZone")}
+                  </div>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="text-sm text-muted-foreground">
+                      {t("settingsDeleteAccountHint")}
+                    </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="notif-volume">{t("settingsVolume")}</Label>
-              <Input
-                id="notif-volume"
-                type="number"
-                min={0}
-                max={1}
-                step={0.05}
-                value={notificationSettings.volume}
-                onChange={(e) =>
-                  notificationSettings.setVolume(Number(e.target.value || 0))
-                }
-              />
-              <div className="text-xs text-muted-foreground">
-                {t("settingsVolumeHint")}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between gap-3">
-              <div className="text-sm text-muted-foreground">
-                {t("settingsVibration")}
-              </div>
-              <Switch
-                checked={notificationSettings.vibrationEnabled}
-                onCheckedChange={notificationSettings.setVibrationEnabled}
-              />
-            </div>
-
-            <div className="flex items-center justify-between gap-3">
-              <div className="text-sm text-muted-foreground">
-                {t("settingsSystemNotifications")}
-              </div>
-              <Switch
-                checked={notificationSettings.systemNotificationsEnabled}
-                onCheckedChange={async (v) => {
-                  notificationSettings.setSystemNotificationsEnabled(v);
-                  if (
-                    v &&
-                    typeof Notification !== "undefined" &&
-                    Notification.permission !== "granted"
-                  ) {
-                    try {
-                      await Notification.requestPermission();
-                    } catch {
-                      // ignore
-                    }
-                  }
-                }}
-              />
-            </div>
-
-            <div className="flex items-center justify-between gap-3">
-              <div className="text-sm text-muted-foreground">
-                {t("settingsRepeatUntilDone")}
-              </div>
-              <Switch
-                checked={notificationSettings.repeatEnabled}
-                onCheckedChange={notificationSettings.setRepeatEnabled}
-              />
-            </div>
-
-            {notificationSettings.repeatEnabled && (
-              <div className="grid gap-2">
-                <Label htmlFor="notif-repeat">
-                  {t("settingsRepeatInterval")}
-                </Label>
-                <Input
-                  id="notif-repeat"
-                  type="number"
-                  min={1}
-                  step={1}
-                  value={notificationSettings.repeatMinutes}
-                  onChange={(e) =>
-                    notificationSettings.setRepeatMinutes(
-                      Number(e.target.value || 1),
-                    )
-                  }
-                />
+                    <ConfirmDialog
+                      title={t("settingsDeleteAccountTitle")}
+                      description={t("settingsDeleteAccountDescription")}
+                      actionText={t("delete")}
+                      variant="destructive"
+                      isLoading={isDeleting}
+                      onConfirm={handleDeleteAccount}
+                      trigger={
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          disabled={!currentUser}
+                        >
+                          {t("settingsDeleteAccountButton")}
+                        </Button>
+                      }
+                    />
+                  </div>
+                </div>
               </div>
             )}
-          </div>
 
-          <Separator />
-
-          <div className="grid gap-3">
-            <div className="text-sm font-semibold">{t("settingsSecurity")}</div>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-sm text-muted-foreground">
-                {t("settingsResetPasswordDescription")}
+            {activeTab === "theme" && (
+              <div className="space-y-6">
+                <div className="grid gap-3">
+                  <div className="text-sm font-semibold">{t("theme")}</div>
+                  <p className="text-sm text-muted-foreground">
+                    {t("settingsThemeDescription")}
+                  </p>
+                  <div className="pt-2">
+                    <ThemeSelector />
+                  </div>
+                </div>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handlePasswordReset}
-                disabled={!currentUser?.email || isSendingReset}
-              >
-                {t("settingsSendResetEmail")}
-              </Button>
-            </div>
-          </div>
+            )}
 
-          <Separator />
+            {activeTab === "notifications" && (
+              <div className="space-y-6">
+                <div className="grid gap-3">
+                  <div className="text-sm font-semibold">
+                    {t("settingsNotifications")}
+                  </div>
 
-          <div className="grid gap-3">
-            <div className="text-sm font-semibold text-destructive">
-              {t("settingsDangerZone")}
-            </div>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-sm text-muted-foreground">
-                {t("settingsDeleteAccountHint")}
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-sm text-muted-foreground">
+                      {t("settingsSound")}
+                    </div>
+                    <Switch
+                      checked={notificationSettings.soundEnabled}
+                      onCheckedChange={notificationSettings.setSoundEnabled}
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="notif-volume">{t("settingsVolume")}</Label>
+                    <Input
+                      id="notif-volume"
+                      type="number"
+                      min={0}
+                      max={1}
+                      step={0.05}
+                      value={notificationSettings.volume}
+                      onChange={(e) =>
+                        notificationSettings.setVolume(
+                          Number(e.target.value || 0),
+                        )
+                      }
+                    />
+                    <div className="text-xs text-muted-foreground">
+                      {t("settingsVolumeHint")}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-sm text-muted-foreground">
+                      {t("settingsVibration")}
+                    </div>
+                    <Switch
+                      checked={notificationSettings.vibrationEnabled}
+                      onCheckedChange={notificationSettings.setVibrationEnabled}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-sm text-muted-foreground">
+                      {t("settingsSystemNotifications")}
+                    </div>
+                    <Switch
+                      checked={notificationSettings.systemNotificationsEnabled}
+                      onCheckedChange={async (v) => {
+                        notificationSettings.setSystemNotificationsEnabled(v);
+                        if (
+                          v &&
+                          typeof Notification !== "undefined" &&
+                          Notification.permission !== "granted"
+                        ) {
+                          try {
+                            await Notification.requestPermission();
+                          } catch {
+                            // ignore
+                          }
+                        }
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-sm text-muted-foreground">
+                      {t("settingsRepeatUntilDone")}
+                    </div>
+                    <Switch
+                      checked={notificationSettings.repeatEnabled}
+                      onCheckedChange={notificationSettings.setRepeatEnabled}
+                    />
+                  </div>
+
+                  {notificationSettings.repeatEnabled && (
+                    <div className="grid gap-2">
+                      <Label htmlFor="notif-repeat">
+                        {t("settingsRepeatInterval")}
+                      </Label>
+                      <Input
+                        id="notif-repeat"
+                        type="number"
+                        min={1}
+                        step={1}
+                        value={notificationSettings.repeatMinutes}
+                        onChange={(e) =>
+                          notificationSettings.setRepeatMinutes(
+                            Number(e.target.value || 1),
+                          )
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
-
-              <ConfirmDialog
-                title={t("settingsDeleteAccountTitle")}
-                description={t("settingsDeleteAccountDescription")}
-                actionText={t("delete")}
-                variant="destructive"
-                isLoading={isDeleting}
-                onConfirm={handleDeleteAccount}
-                trigger={
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    disabled={!currentUser}
-                  >
-                    {t("settingsDeleteAccountButton")}
-                  </Button>
-                }
-              />
-            </div>
+            )}
           </div>
         </div>
       </DialogContent>

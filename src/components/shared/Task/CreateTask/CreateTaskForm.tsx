@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 import { useWatch } from "react-hook-form";
+import { TaskTemplates, type TaskTemplate } from "./TaskTemplates";
 
 interface CreateTaskFormProps {
   // Типизируем через стандартные типы RHF
@@ -46,9 +47,29 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
   const { t } = useTranslation();
   const [isDueDateOpen, setIsDueDateOpen] = React.useState(false);
   const [isReminderOpen, setIsReminderOpen] = React.useState(false);
+  const [selectedTemplateId, setSelectedTemplateId] = React.useState<
+    string | null
+  >(null);
   const dueDate = useWatch({ control, name: "dueDate" }) ?? null;
   const reminderAt = useWatch({ control, name: "reminderAt" }) ?? null;
   const [reminderTime, setReminderTime] = React.useState<string>("09:00");
+
+  const handleTemplateSelect = React.useCallback(
+    (template: TaskTemplate) => {
+      setValue("text", template.text, {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
+      setValue("description", template.description, {
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+      setPriority(template.priority);
+      setSelectedTemplateId(template.id);
+    },
+    [setValue, setPriority],
+  );
 
   const dueDateLabel = React.useMemo(() => {
     if (!dueDate) return t("dueDate");
@@ -82,6 +103,11 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
     // В handleSubmit передаем функцию onSubmit
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
       <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-4 space-y-4">
+        <TaskTemplates
+          onSelect={handleTemplateSelect}
+          selectedId={selectedTemplateId}
+        />
+
         <Input
           type="text"
           placeholder={t("createTask")}

@@ -11,18 +11,48 @@ import { DropdownMenuItem } from "../../ui/dropdown-menu";
 import useCurrentUser from "@/store/useCurrentUser";
 import { useTranslation } from "react-i18next";
 
-export const ProfileDialog: React.FC = () => {
+interface ProfileDialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export const ProfileDialog: React.FC<ProfileDialogProps> = ({
+  open: controlledOpen,
+  onOpenChange,
+}) => {
   const currentUser = useCurrentUser((state) => state.currentUser);
   const { t } = useTranslation();
+  const [internalOpen, setInternalOpen] = React.useState(false);
+
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = (value: boolean) => {
+    if (isControlled) {
+      onOpenChange?.(value);
+    } else {
+      setInternalOpen(value);
+    }
+  };
+
+  // Listen for openProfile event from CommandPalette (only when not controlled)
+  React.useEffect(() => {
+    if (isControlled) return;
+
+    const handleOpenProfile = () => setInternalOpen(true);
+    window.addEventListener("openProfile", handleOpenProfile);
+    return () => window.removeEventListener("openProfile", handleOpenProfile);
+  }, [isControlled]);
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-          <UserIcon className=" h-4 w-4" />
-          {t("profile")}
-        </DropdownMenuItem>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+            <UserIcon className=" h-4 w-4" />
+            {t("profile")}
+          </DropdownMenuItem>
+        </DialogTrigger>
+      )}
 
       <DialogContent className="sm:max-w-md max-h-[90svh] overflow-y-auto">
         <DialogHeader>

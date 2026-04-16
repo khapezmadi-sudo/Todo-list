@@ -8,6 +8,7 @@ import { AppSidebar } from "./AppSidebar";
 import { useTranslation } from "react-i18next";
 import { useTaskReminders } from "@/hooks/use-task-reminders";
 import useCurrentUser from "@/store/useCurrentUser";
+import { DailyProgress } from "./DailyProgress";
 
 export default function Layout() {
   const location = useLocation();
@@ -16,8 +17,20 @@ export default function Layout() {
 
   useTaskReminders(currentUser?.uid);
 
+  // Get base path without dialog suffix for title
+  const getBasePath = (path: string) => {
+    return (
+      path.replace(
+        /\/(settings|profile|stats|statistics|create|search)$/,
+        "",
+      ) || "/"
+    );
+  };
+
+  const basePath = getBasePath(location.pathname);
+
   const pageTitle = (() => {
-    switch (location.pathname) {
+    switch (basePath) {
       case "/today":
         return t("today");
       case "/calendar":
@@ -57,6 +70,7 @@ export default function Layout() {
             </div>
           </main>
         </SidebarInset>
+        <DailyProgress />
       </div>
     </SidebarProvider>
   );

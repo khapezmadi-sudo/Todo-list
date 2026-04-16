@@ -27,12 +27,30 @@ import { ScrollArea } from "../ui/scroll-area";
 import { Loading } from "./Loading";
 import { useTranslation } from "react-i18next";
 
-export const SearchDialog: React.FC = () => {
+interface SearchDialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export const SearchDialog: React.FC<SearchDialogProps> = ({
+  open: controlledOpen,
+  onOpenChange,
+}) => {
   const [tasks, setTasks] = useState<Task[] | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [open, setOpen] = useState<boolean>(false);
+  const [internalOpen, setInternalOpen] = useState<boolean>(false);
   const [debouncedSearch] = useDebounce(searchQuery, 400);
   const { t } = useTranslation();
+
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = (value: boolean) => {
+    if (isControlled) {
+      onOpenChange?.(value);
+    } else {
+      setInternalOpen(value);
+    }
+  };
 
   // Подписка только при открытом диалоге
   useEffect(() => {
@@ -73,13 +91,16 @@ export const SearchDialog: React.FC = () => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {/* Теперь кнопка в сайдбаре всегда доступна */}
-        <SidebarMenuButton className="cursor-pointer text-muted-foreground">
-          <Search className="h-4 w-4" />
-          <span>{t("search")}</span>
-        </SidebarMenuButton>
-      </DialogTrigger>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          <SidebarMenuButton className="cursor-pointer w-full">
+            <Search className="text-sidebar-primary dark:text-sidebar-primary" />
+            <span className="text-sidebar-primary dark:text-sidebar-primary">
+              {t("search")}
+            </span>
+          </SidebarMenuButton>
+        </DialogTrigger>
+      )}
 
       <DialogContent className="sm:max-w-lg p-0 overflow-hidden rounded-2xl shadow-xl max-h-[90svh]">
         <div className="flex items-center gap-3 border-b px-4 py-3 bg-muted/30">
