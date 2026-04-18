@@ -1,13 +1,8 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { Suspense, useState, useEffect, useMemo } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "@/firebase";
 import type { Task } from "@/types/task";
-import { HomePage } from "@/pages/HomePage";
-import { CompletedPage } from "@/pages/CompletedPage";
-import { ImportantPage } from "@/pages/ImportantPage";
-import { TodayPage } from "@/pages/TodayPage";
-import { CalendarPage } from "@/pages/CalendarPage";
 import { SettingsDialog } from "./SidebarHeaderLayout/SettingsDialog";
 import { ProfileDialog } from "./SidebarHeaderLayout/ProfileDialog";
 import { StatisticsDialog } from "./SidebarHeaderLayout/StatisticsDialog";
@@ -18,15 +13,34 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Loading } from "./Loading";
 import { useTranslation } from "react-i18next";
 
+const HomePage = React.lazy(() =>
+  import("@/pages/HomePage").then((m) => ({ default: m.HomePage })),
+);
+const CompletedPage = React.lazy(() =>
+  import("@/pages/CompletedPage").then((m) => ({ default: m.CompletedPage })),
+);
+const ImportantPage = React.lazy(() =>
+  import("@/pages/ImportantPage").then((m) => ({ default: m.ImportantPage })),
+);
+const TodayPage = React.lazy(() =>
+  import("@/pages/TodayPage").then((m) => ({ default: m.TodayPage })),
+);
+const CalendarPage = React.lazy(() =>
+  import("@/pages/CalendarPage").then((m) => ({ default: m.CalendarPage })),
+);
+
 type TabType = "account" | "theme" | "notifications";
 
 // Helper to get background page based on path
 const getBackgroundPage = (path: string) => {
-  if (path.startsWith("/completed")) return <CompletedPage />;
-  if (path.startsWith("/important")) return <ImportantPage />;
-  if (path.startsWith("/today")) return <TodayPage />;
-  if (path.startsWith("/calendar")) return <CalendarPage />;
-  return <HomePage />;
+  const page = (() => {
+    if (path.startsWith("/completed")) return <CompletedPage />;
+    if (path.startsWith("/important")) return <ImportantPage />;
+    if (path.startsWith("/today")) return <TodayPage />;
+    if (path.startsWith("/calendar")) return <CalendarPage />;
+    return <HomePage />;
+  })();
+  return <Suspense fallback={<Loading />}>{page}</Suspense>;
 };
 
 // Base path without dialog suffix
